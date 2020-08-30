@@ -4,5 +4,6 @@
 ## Dependencies: AzerPUG-InstanceUtility-Core 
 ## Notes: Utility for Instances (Raids and Dungeons)!
 ## Version: BFA 8.3.7 (For actual addon version, check main.lua)
+## SavedVariables: AutoInviteCommand
 
 main.lua
