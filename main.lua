@@ -1,6 +1,6 @@
 local GlobalAddonName, AIU = ...
 
-AZPIUInstanceLeadingVersion = 0.1
+AZPIUInstanceLeadingVersion = 0.2
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
