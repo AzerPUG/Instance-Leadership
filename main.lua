@@ -1,6 +1,6 @@
 local GlobalAddonName, AIU = ...
 
-AZPIUInstanceLeadingVersion = 0.2
+AZPIUInstanceLeadingVersion = 0.3
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
@@ -23,7 +23,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     AZPReadyCheckButton:SetHeight("25")
     AZPReadyCheckButton.contentText:SetWidth("100")
     AZPReadyCheckButton.contentText:SetHeight("15")
-    AZPReadyCheckButton:SetPoint("TOPLEFT", 5, -120)
+    AZPReadyCheckButton:SetPoint("TOPLEFT", 5, -125)
     AZPReadyCheckButton.contentText:SetPoint("CENTER", 0, -1)
     AZPReadyCheckButton:SetScript("OnClick", function() DoReadyCheck() end )
 
@@ -34,7 +34,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     PullButton:SetHeight("25")
     PullButton.contentText:SetWidth("100")
     PullButton.contentText:SetHeight("15")
-    PullButton:SetPoint("TOPLEFT", 5, -145)
+    PullButton:SetPoint("TOPLEFT", 5, -150)
     PullButton.contentText:SetPoint("CENTER", 0, -1)
     PullButton:SetScript("OnClick", function() C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(10,-1), "RAID"); end )
 
@@ -45,7 +45,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     CancelPullButton:SetHeight("25")
     CancelPullButton.contentText:SetWidth("100")
     CancelPullButton.contentText:SetHeight("15")
-    CancelPullButton:SetPoint("TOPLEFT", 5, -170)
+    CancelPullButton:SetPoint("TOPLEFT", 5, -175)
     CancelPullButton.contentText:SetPoint("CENTER", 0, -1)
     CancelPullButton:SetScript("OnClick", 
         function()
@@ -60,7 +60,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     ShortBreakButton:SetHeight("25")
     ShortBreakButton.contentText:SetWidth("100")
     ShortBreakButton.contentText:SetHeight("15")
-    ShortBreakButton:SetPoint("TOPLEFT", 5, -195)
+    ShortBreakButton:SetPoint("TOPLEFT", 5, -200)
     ShortBreakButton.contentText:SetPoint("CENTER", 0, -1)
     ShortBreakButton:SetScript("OnClick",
         function()
@@ -90,7 +90,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     CombatLoggingButton:SetHeight("25")
     CombatLoggingButton.contentText:SetWidth("100")
     CombatLoggingButton.contentText:SetHeight("15")
-    CombatLoggingButton:SetPoint("TOPLEFT", 5, -220)
+    CombatLoggingButton:SetPoint("TOPLEFT", 5, -225)
     CombatLoggingButton.contentText:SetPoint("CENTER", 0, -1)
     CombatLoggingButton:SetScript("OnClick", function() addonMain:ToggleCombatLog() end )
 
