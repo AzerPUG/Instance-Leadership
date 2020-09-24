@@ -1,6 +1,6 @@
 local GlobalAddonName, AIU = ...
 
-AZPIUInstanceLeadingVersion = 0.3
+AZPIUInstanceLeadingVersion = 0.4
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
@@ -68,21 +68,6 @@ function AZP.IU.OnLoad:InstanceLeading(self)
             SendChatMessage("5 MINUTE BREAK HAS STARTED!" ,"RAID_WARNING")
         end )
 
-    -- local LongBreakButton = CreateFrame("Button", "LongBreakButton", InstanceUtilityAddonFrame, "UIPanelButtonTemplate")
-    -- LongBreakButton.contentText = LongBreakButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    -- LongBreakButton.contentText:SetText("Break 10!")
-    -- LongBreakButton:SetWidth("100")
-    -- LongBreakButton:SetHeight("25")
-    -- LongBreakButton.contentText:SetWidth("100")
-    -- LongBreakButton.contentText:SetHeight("15")
-    -- LongBreakButton:SetPoint("TOPLEFT", 5, -220)
-    -- LongBreakButton.contentText:SetPoint("CENTER", 0, -1)
-    -- LongBreakButton:SetScript("OnClick",
-    -- function()
-    --     DBM:CreatePizzaTimer(600, "Break Time!", true)
-    --     SendChatMessage("10 MINUTE BREAK HAS STARTED!" ,"RAID_WARNING")
-    -- end )
-
     local CombatLoggingButton = CreateFrame("Button", "CombatLoggingButton", InstanceUtilityAddonFrame, "UIPanelButtonTemplate")
     CombatLoggingButton.contentText = CombatLoggingButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     CombatLoggingButton.contentText:SetText("Combat Log!")
@@ -104,14 +89,11 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
             InviteUnit(msgSender)
         end
     elseif event == "CHAT_MSG_BN_WHISPER" then
-        print("test1")
         local msgText, _, _, _, _, _, _, _, _, _, _, v12, friendIndex = ...
         if msgText == AutoInviteCommand then
-            print("test2 - ")
             local accountInfo = C_BattleNet.GetAccountInfoByID(friendIndex)
             local charName = accountInfo.gameAccountInfo.characterName
             local serverName = accountInfo.gameAccountInfo.realmName
-            print(charName .. "-" .. serverName)
             InviteUnit(charName .. "-" .. serverName)
         end
     end
