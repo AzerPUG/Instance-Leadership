@@ -15,6 +15,7 @@ end
 function AZP.IU.OnLoad:InstanceLeading(self)
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_WHISPER")
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
+    InstanceUtilityAddonFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 
     local AZPReadyCheckButton = CreateFrame("Button", "AZPReadyCheckButton", InstanceUtilityAddonFrame, "UIPanelButtonTemplate")
     AZPReadyCheckButton.contentText = AZPReadyCheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -80,6 +81,9 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     CombatLoggingButton:SetScript("OnClick", function() addonMain:ToggleCombatLog() end )
 
     addonMain:ChangeOptionsText()
+
+    if AutoAssistCommand == nil then AutoAssistCommand = "" end
+    if AutoInviteCommand == nil then AutoInviteCommand = "" end
 end
 
 function AZP.IU.OnEvent:InstanceLeading(event, ...)
@@ -96,6 +100,16 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
             local serverName = accountInfo.gameAccountInfo.realmName
             InviteUnit(charName .. "-" .. serverName)
         end
+    elseif event == "GROUP_ROSTER_UPDATE" then
+        if UnitIsGroupLeader("player") and IsInRaid() then
+            local text = AZPAutoAssistEditBox:GetText()
+            local names = addonMain:splitCharacterNames(text)
+            table.foreach(names, function(_, name) 
+                if UnitIsGroupAssistant(name) == false then
+                    PromoteToAssistant(name)
+                end
+            end)
+        end
     end
 end
 
@@ -108,6 +122,18 @@ function addonMain:ToggleCombatLog()
         print("Stopping Combat Logging!")
     end
 
+end
+
+function addonMain:splitCharacterNames(input)
+    local names = {}
+    local inputLen = #input
+    local index = 1
+    while index < inputLen do
+        local matchStart, matchEnd = string.find(input, ",?([^,]+),?", index)
+        index = matchEnd + 1
+        table.insert(names, string.sub(input, matchStart, matchEnd))
+    end
+    return names
 end
 
 function addonMain:ChangeOptionsText()
@@ -141,4 +167,40 @@ function addonMain:ChangeOptionsText()
     AZPAutoInviteEditBox:SetFrameStrata("DIALOG")
     AZPAutoInviteEditBox:SetMaxLetters(100)
     AZPAutoInviteEditBox:SetFontObject("ChatFontNormal")
+
+    
+    local AZPAutoAssistLabel = CreateFrame("Frame", "AZPAutoAssistLabel", InstanceLeadingSubPanel)
+    AZPAutoAssistLabel:SetSize(500, 15)
+    AZPAutoAssistLabel:SetPoint("TOPLEFT", 25, -150)
+    AZPAutoAssistLabel.contentText = AZPAutoAssistLabel:CreateFontString("AZPAutoAssistLabel", "ARTWORK", "GameFontNormalLarge")
+    AZPAutoAssistLabel.contentText:SetPoint("TOPLEFT")
+    AZPAutoAssistLabel.contentText:SetText("Auto Promote Assistant")
+
+    local AZPAutoAssistEditBox = CreateFrame("EditBox", "AZPAutoAssistEditBox", InstanceLeadingSubPanel, "InputBoxTemplate")
+    AZPAutoAssistEditBox:SetSize(150, 35)
+    AZPAutoAssistEditBox:SetWidth(150)
+    AZPAutoAssistEditBox:SetPoint("TOPLEFT", 25, -165)
+    AZPAutoAssistEditBox:SetAutoFocus(false)
+    AZPAutoAssistEditBox:SetScript("OnEditFocusLost", function() AutoAssistCommand = AZPAutoAssistEditBox:GetText() end)
+    InstanceLeadingSubPanel:SetScript("OnShow", function()
+        AZPAutoAssistEditBox:SetText(AutoAssistCommand)
+    end)
+    AZPAutoAssistEditBox:SetFrameStrata("DIALOG")
+    AZPAutoAssistEditBox:SetMaxLetters(100)
+    AZPAutoAssistEditBox:SetFontObject("ChatFontNormal")
+
+    TempButton = CreateFrame("Button", "TempButton", AZPAutoAssistEditBox, "UIPanelButtonTemplate")
+    TempButton.contentText = TempButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    TempButton.contentText:SetText("X")
+    TempButton:SetWidth("15")
+    TempButton:SetHeight("15")
+    TempButton.contentText:SetWidth("100")
+    TempButton.contentText:SetHeight("15")
+    TempButton:SetPoint("RIGHT")
+    TempButton.contentText:SetPoint("CENTER", 0, -1)
+    TempButton:SetScript("OnClick", function() 
+        local text = AZPAutoAssistEditBox:GetText()
+        local names = addonMain:splitCharacterNames(text)
+        table.foreach(names, print)
+    end )
 end
