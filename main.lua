@@ -104,7 +104,7 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
         if UnitIsGroupLeader("player") and IsInRaid() then
             local text = AZPAutoAssistEditBox:GetText()
             local names = addonMain:splitCharacterNames(text)
-            table.foreach(names, function(_, name) 
+            table.foreach(names, function(_, name)
                 if UnitIsGroupAssistant(name) == false then
                     PromoteToAssistant(name)
                 end
@@ -168,7 +168,6 @@ function addonMain:ChangeOptionsText()
     AZPAutoInviteEditBox:SetMaxLetters(100)
     AZPAutoInviteEditBox:SetFontObject("ChatFontNormal")
 
-    
     local AZPAutoAssistLabel = CreateFrame("Frame", "AZPAutoAssistLabel", InstanceLeadingSubPanel)
     AZPAutoAssistLabel:SetSize(500, 15)
     AZPAutoAssistLabel:SetPoint("TOPLEFT", 25, -150)
