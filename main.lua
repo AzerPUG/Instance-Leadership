@@ -1,6 +1,6 @@
 local GlobalAddonName, AIU = ...
 
-AZPIUInstanceLeadingVersion = 0.4
+AZPIUInstanceLeadingVersion = 0.5
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
@@ -174,7 +174,7 @@ function addonMain:ChangeOptionsText()
     AZPAutoAssistLabel:SetPoint("TOPLEFT", 25, -150)
     AZPAutoAssistLabel.contentText = AZPAutoAssistLabel:CreateFontString("AZPAutoAssistLabel", "ARTWORK", "GameFontNormalLarge")
     AZPAutoAssistLabel.contentText:SetPoint("TOPLEFT")
-    AZPAutoAssistLabel.contentText:SetText("Auto Promote Assistant")
+    AZPAutoAssistLabel.contentText:SetText("Auto Promote Assistant (Add characters as: 'CharName-ServerName', split multiple chars by a comma ',' ).")
 
     local AZPAutoAssistEditBox = CreateFrame("EditBox", "AZPAutoAssistEditBox", InstanceLeadingSubPanel, "InputBoxTemplate")
     AZPAutoAssistEditBox:SetSize(150, 35)
