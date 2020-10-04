@@ -96,9 +96,11 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
         local msgText, _, _, _, _, _, _, _, _, _, _, v12, friendIndex = ...
         if msgText == AutoInviteCommand then
             local accountInfo = C_BattleNet.GetAccountInfoByID(friendIndex)
-            local charName = accountInfo.gameAccountInfo.characterName
-            local serverName = accountInfo.gameAccountInfo.realmName
-            InviteUnit(charName .. "-" .. serverName)
+            if accountInfo ~= nil then
+                local charName = accountInfo.gameAccountInfo.characterName
+                local serverName = accountInfo.gameAccountInfo.realmName
+                InviteUnit(charName .. "-" .. serverName)
+            end
         end
     elseif event == "GROUP_ROSTER_UPDATE" then
         if UnitIsGroupLeader("player") and IsInRaid() then
