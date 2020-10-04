@@ -129,9 +129,10 @@ function addonMain:splitCharacterNames(input)
     local inputLen = #input
     local index = 1
     while index < inputLen do
-        local matchStart, matchEnd = string.find(input, ",?([^,]+),?", index)
+        local _, matchEnd = string.find(input, ",?([^,]+),?", index)
+        local name = string.match(input, ",?([^,]+),?", index)
         index = matchEnd + 1
-        table.insert(names, string.sub(input, matchStart, matchEnd))
+        table.insert(names, name)
     end
     return names
 end
@@ -188,19 +189,4 @@ function addonMain:ChangeOptionsText()
     AZPAutoAssistEditBox:SetFrameStrata("DIALOG")
     AZPAutoAssistEditBox:SetMaxLetters(100)
     AZPAutoAssistEditBox:SetFontObject("ChatFontNormal")
-
-    TempButton = CreateFrame("Button", "TempButton", AZPAutoAssistEditBox, "UIPanelButtonTemplate")
-    TempButton.contentText = TempButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    TempButton.contentText:SetText("X")
-    TempButton:SetWidth("15")
-    TempButton:SetHeight("15")
-    TempButton.contentText:SetWidth("100")
-    TempButton.contentText:SetHeight("15")
-    TempButton:SetPoint("RIGHT")
-    TempButton.contentText:SetPoint("CENTER", 0, -1)
-    TempButton:SetScript("OnClick", function() 
-        local text = AZPAutoAssistEditBox:GetText()
-        local names = addonMain:splitCharacterNames(text)
-        table.foreach(names, print)
-    end )
 end
