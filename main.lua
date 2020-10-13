@@ -1,12 +1,14 @@
 local GlobalAddonName, AIU = ...
 
-AZPIUInstanceLeadingVersion = 0.5
+local AZPIUInstanceLeadingVersion = 6
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
 local promo = (nameFull .. dash ..  AZPIUInstanceLeadingVersion)
 
 local addonMain = LibStub("AceAddon-3.0"):NewAddon("InstanceUtility-InstanceLeading", "AceConsole-3.0")
+
+local ModuleStats = AZP.IU.ModuleStats
 
 function AZP.IU.VersionControl:InstanceLeading()
     return AZPIUInstanceLeadingVersion
@@ -17,36 +19,38 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
     InstanceUtilityAddonFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 
-    local AZPReadyCheckButton = CreateFrame("Button", "AZPReadyCheckButton", InstanceUtilityAddonFrame, "UIPanelButtonTemplate")
+    ModuleStats["Frames"]["InstanceLeading"]:SetSize(110, 150)
+
+    local AZPReadyCheckButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     AZPReadyCheckButton.contentText = AZPReadyCheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     AZPReadyCheckButton.contentText:SetText("Ready Check!")
     AZPReadyCheckButton:SetWidth("100")
     AZPReadyCheckButton:SetHeight("25")
     AZPReadyCheckButton.contentText:SetWidth("100")
     AZPReadyCheckButton.contentText:SetHeight("15")
-    AZPReadyCheckButton:SetPoint("TOPLEFT", 5, -125)
+    AZPReadyCheckButton:SetPoint("TOPLEFT", 5, -5)
     AZPReadyCheckButton.contentText:SetPoint("CENTER", 0, -1)
     AZPReadyCheckButton:SetScript("OnClick", function() DoReadyCheck() end )
 
-    local PullButton = CreateFrame("Button", "PullButton", InstanceUtilityAddonFrame, "UIPanelButtonTemplate")
+    local PullButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     PullButton.contentText = PullButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     PullButton.contentText:SetText("Pull!")
     PullButton:SetWidth("100")
     PullButton:SetHeight("25")
     PullButton.contentText:SetWidth("100")
     PullButton.contentText:SetHeight("15")
-    PullButton:SetPoint("TOPLEFT", 5, -150)
+    PullButton:SetPoint("TOPLEFT", 5, -30)
     PullButton.contentText:SetPoint("CENTER", 0, -1)
     PullButton:SetScript("OnClick", function() C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(10,-1), "RAID"); end )
 
-    local CancelPullButton = CreateFrame("Button", "CancelPullButton", InstanceUtilityAddonFrame, "UIPanelButtonTemplate")
+    local CancelPullButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     CancelPullButton.contentText = CancelPullButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     CancelPullButton.contentText:SetText("Cancel Pull!")
     CancelPullButton:SetWidth("100")
     CancelPullButton:SetHeight("25")
     CancelPullButton.contentText:SetWidth("100")
     CancelPullButton.contentText:SetHeight("15")
-    CancelPullButton:SetPoint("TOPLEFT", 5, -175)
+    CancelPullButton:SetPoint("TOPLEFT", 5, -55)
     CancelPullButton.contentText:SetPoint("CENTER", 0, -1)
     CancelPullButton:SetScript("OnClick", 
         function()
@@ -54,14 +58,14 @@ function AZP.IU.OnLoad:InstanceLeading(self)
             SendChatMessage("PULL CANCELLED, HAKUNA YOUR TATA'S!" ,"RAID_WARNING")
         end )
 
-    local ShortBreakButton = CreateFrame("Button", "ShortBreakButton", InstanceUtilityAddonFrame, "UIPanelButtonTemplate")
+    local ShortBreakButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     ShortBreakButton.contentText = ShortBreakButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     ShortBreakButton.contentText:SetText("5m Break!")
     ShortBreakButton:SetWidth("100")
     ShortBreakButton:SetHeight("25")
     ShortBreakButton.contentText:SetWidth("100")
     ShortBreakButton.contentText:SetHeight("15")
-    ShortBreakButton:SetPoint("TOPLEFT", 5, -200)
+    ShortBreakButton:SetPoint("TOPLEFT", 5, -80)
     ShortBreakButton.contentText:SetPoint("CENTER", 0, -1)
     ShortBreakButton:SetScript("OnClick",
         function()
@@ -69,14 +73,14 @@ function AZP.IU.OnLoad:InstanceLeading(self)
             SendChatMessage("5 MINUTE BREAK HAS STARTED!" ,"RAID_WARNING")
         end )
 
-    local CombatLoggingButton = CreateFrame("Button", "CombatLoggingButton", InstanceUtilityAddonFrame, "UIPanelButtonTemplate")
+    local CombatLoggingButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     CombatLoggingButton.contentText = CombatLoggingButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     CombatLoggingButton.contentText:SetText("Combat Log!")
     CombatLoggingButton:SetWidth("100")
     CombatLoggingButton:SetHeight("25")
     CombatLoggingButton.contentText:SetWidth("100")
     CombatLoggingButton.contentText:SetHeight("15")
-    CombatLoggingButton:SetPoint("TOPLEFT", 5, -225)
+    CombatLoggingButton:SetPoint("TOPLEFT", 5, -105)
     CombatLoggingButton.contentText:SetPoint("CENTER", 0, -1)
     CombatLoggingButton:SetScript("OnClick", function() addonMain:ToggleCombatLog() end )
 
@@ -132,9 +136,9 @@ function addonMain:splitCharacterNames(input)
     local index = 1
     while index < inputLen do
         local _, matchEnd = string.find(input, ",?([^,]+),?", index)
-        local name = string.match(input, ",?([^,]+),?", index)
+        local assistName = string.match(input, ",?([^,]+),?", index)
         index = matchEnd + 1
-        table.insert(names, name)
+        table.insert(names, assistName)
     end
     return names
 end
