@@ -1,6 +1,6 @@
 local GlobalAddonName, AIU = ...
 
-local AZPIUInstanceLeadingVersion = 7
+local AZPIUInstanceLeadingVersion = 8
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
@@ -93,17 +93,17 @@ end
 function AZP.IU.OnEvent:InstanceLeading(event, ...)
     if event == "CHAT_MSG_WHISPER" then
         local msgText, msgSender = ...
-        if msgText == AutoInviteCommand then
-            InviteUnit(msgSender)
+        if string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
+            C_PartyInfo.InviteUnit(msgSender)
         end
     elseif event == "CHAT_MSG_BN_WHISPER" then
-        local msgText, _, _, _, _, _, _, _, _, _, _, v12, friendIndex = ...
-        if msgText == AutoInviteCommand then
+        local msgText, _, _, _, _, _, _, _, _, _, _, _, friendIndex = ...
+        if string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
             local accountInfo = C_BattleNet.GetAccountInfoByID(friendIndex)
             if accountInfo ~= nil then
                 local charName = accountInfo.gameAccountInfo.characterName
                 local serverName = accountInfo.gameAccountInfo.realmName
-                InviteUnit(charName .. "-" .. serverName)
+                C_PartyInfo.InviteUnit(charName .. "-" .. serverName)
             end
         end
     elseif event == "GROUP_ROSTER_UPDATE" then
