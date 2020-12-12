@@ -93,12 +93,12 @@ end
 function AZP.IU.OnEvent:InstanceLeading(event, ...)
     if event == "CHAT_MSG_WHISPER" then
         local msgText, msgSender = ...
-        if string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
+        if #AutoInviteCommand > 0 and string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
             C_PartyInfo.InviteUnit(msgSender)
         end
     elseif event == "CHAT_MSG_BN_WHISPER" then
         local msgText, _, _, _, _, _, _, _, _, _, _, _, friendIndex = ...
-        if string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
+        if #AutoInviteCommand > 0 and string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
             local accountInfo = C_BattleNet.GetAccountInfoByID(friendIndex)
             if accountInfo ~= nil then
                 local charName = accountInfo.gameAccountInfo.characterName
