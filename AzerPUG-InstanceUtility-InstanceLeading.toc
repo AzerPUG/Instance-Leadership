@@ -7,3 +7,4 @@
 ## SavedVariables: AutoInviteCommand, AutoAssistCommand, AIUSavedRaidPresence
 
 main.lua
+dataTables.lua

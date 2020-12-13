@@ -18,6 +18,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_WHISPER")
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
     InstanceUtilityAddonFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    InstanceUtilityAddonFrame:RegisterEvent("ENCOUNTER_START")
 
     ModuleStats["Frames"]["InstanceLeading"]:SetSize(300, 150)
 
@@ -31,7 +32,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     AZPSavePresenceButton.contentText:SetHeight("15")
     AZPSavePresenceButton:SetPoint("TOPRIGHT", -5, -5)
     AZPSavePresenceButton.contentText:SetPoint("CENTER", 0, -1)
-    AZPSavePresenceButton:SetScript("OnClick", function() addonMain:SaveRaidPresence() end )
+    AZPSavePresenceButton:SetScript("OnClick", function() addonMain:SaveRaidPresence(nil) end )
     
     local AZPExportPresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     AZPExportPresenceButton.contentText = AZPExportPresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -155,6 +156,14 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
                 end
             end)
         end
+    elseif event == "ENCOUNTER_START" then
+        encounterID, encounterName, difficultyID, groupSize = ...
+
+        for i, encounter in ipairs(encounters) do
+            if encounterID == encounter.id then
+                addonMain:SaveRaidPresence(encounterID)
+            end
+        end
     end
 end
 
@@ -182,7 +191,7 @@ function addonMain:splitCharacterNames(input)
     return names
 end
 
-function addonMain:SaveRaidPresence()
+function addonMain:SaveRaidPresence(encounterID)
     local saveDate = date("%Y/%m/%d %H:%M")
     print("Save Raid Presence on " .. saveDate)
      
@@ -191,6 +200,7 @@ function addonMain:SaveRaidPresence()
 
     local newRaidPresence = {}
     newRaidPresence.date = saveDate
+    newRaidPresence.encounterID = encounterID
     newRaidPresence.attendees = {}
 
     for i=1,raidMembers do
@@ -207,7 +217,16 @@ function addonMain:ExportRaidPresence()
 
     local exportString = ""
     for i, presence in ipairs(AIUSavedRaidPresence) do
-        exportString = exportString .. string.format("\"%s\",%s\n", presence.date, table.concat(presence.attendees, ","))
+        -- Fetch the name of the encounter.
+        local encounterName = "Manual Saved"
+        local raidName = "Manual Saved"
+        for i,encounter in ipairs(AIU.encounters) do
+            if encounter.id == presence.encounterID then
+                encounterName = encounter.name
+                raidName = encounter.raid
+            end
+        end
+        exportString = exportString .. string.format("\"%s\",\"%s\",\"%s\",%s\n", presence.date, raidName, encounterName, table.concat(presence.attendees, ","))
     end
 
     if InstanceUtilityPresenceExportFrame ~= nil then
