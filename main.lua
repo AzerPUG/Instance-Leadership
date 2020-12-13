@@ -159,7 +159,7 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
     elseif event == "ENCOUNTER_START" then
         encounterID, encounterName, difficultyID, groupSize = ...
 
-        for i, encounter in ipairs(encounters) do
+        for i, encounter in ipairs(AIU.encounters) do
             if encounterID == encounter.id then
                 addonMain:SaveRaidPresence(encounterID)
             end
