@@ -22,7 +22,6 @@ function AZP.IU.OnLoad:InstanceLeading(self)
 
     ModuleStats["Frames"]["InstanceLeading"]:SetSize(300, 150)
 
-    
     local AZPSavePresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     AZPSavePresenceButton.contentText = AZPSavePresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     AZPSavePresenceButton.contentText:SetText("Save Raid Presence")
@@ -33,7 +32,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     AZPSavePresenceButton:SetPoint("TOPRIGHT", -5, -5)
     AZPSavePresenceButton.contentText:SetPoint("CENTER", 0, -1)
     AZPSavePresenceButton:SetScript("OnClick", function() addonMain:SaveRaidPresence(nil) end )
-    
+
     local AZPExportPresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     AZPExportPresenceButton.contentText = AZPExportPresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     AZPExportPresenceButton.contentText:SetText("Export Raid Presence")
@@ -194,7 +193,7 @@ end
 function addonMain:SaveRaidPresence(encounterID)
     local saveDate = date("%Y/%m/%d %H:%M")
     print("Save Raid Presence on " .. saveDate)
-     
+
     local raidMembers = GetNumGroupMembers()
     print(string.format("Currently in a raid with %d players", raidMembers))
 
@@ -216,11 +215,11 @@ function addonMain:ExportRaidPresence()
     print("Export Raid Presence")
 
     local exportString = ""
-    for i, presence in ipairs(AIUSavedRaidPresence) do
+    for _, presence in ipairs(AIUSavedRaidPresence) do
         -- Fetch the name of the encounter.
         local encounterName = "Manual Saved"
         local raidName = "Manual Saved"
-        for i,encounter in ipairs(AIU.encounters) do
+        for _,encounter in ipairs(AIU.encounters) do
             if encounter.id == presence.encounterID then
                 encounterName = encounter.name
                 raidName = encounter.raid
