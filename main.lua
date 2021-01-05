@@ -1,6 +1,6 @@
 local GlobalAddonName, AIU = ...
 
-local AZPIUInstanceLeadingVersion = 15
+local AZPIUInstanceLeadingVersion = 16
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
@@ -9,6 +9,9 @@ local promo = (nameFull .. dash ..  AZPIUInstanceLeadingVersion)
 local addonMain = LibStub("AceAddon-3.0"):NewAddon("InstanceUtility-InstanceLeading", "AceConsole-3.0")
 
 local ModuleStats = AZP.IU.ModuleStats
+
+local AZPIUPresenceEditBox
+local AZPIUPresenceScrollFrame
 
 function AZP.IU.VersionControl:InstanceLeading()
     return AZPIUInstanceLeadingVersion
@@ -20,40 +23,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     InstanceUtilityAddonFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     InstanceUtilityAddonFrame:RegisterEvent("ENCOUNTER_START")
 
-    ModuleStats["Frames"]["InstanceLeading"]:SetSize(300, 150)
-
-    local AZPSavePresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
-    AZPSavePresenceButton.contentText = AZPSavePresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    AZPSavePresenceButton.contentText:SetText("Save Raid Presence")
-    AZPSavePresenceButton:SetWidth("100")
-    AZPSavePresenceButton:SetHeight("25")
-    AZPSavePresenceButton.contentText:SetWidth("100")
-    AZPSavePresenceButton.contentText:SetHeight("15")
-    AZPSavePresenceButton:SetPoint("TOPRIGHT", -5, -5)
-    AZPSavePresenceButton.contentText:SetPoint("CENTER", 0, -1)
-    AZPSavePresenceButton:SetScript("OnClick", function() addonMain:SaveRaidPresence(nil) end )
-
-    local AZPExportPresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
-    AZPExportPresenceButton.contentText = AZPExportPresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    AZPExportPresenceButton.contentText:SetText("Export Raid Presence")
-    AZPExportPresenceButton:SetWidth("100")
-    AZPExportPresenceButton:SetHeight("25")
-    AZPExportPresenceButton.contentText:SetWidth("100")
-    AZPExportPresenceButton.contentText:SetHeight("15")
-    AZPExportPresenceButton:SetPoint("TOPRIGHT", -5, -30)
-    AZPExportPresenceButton.contentText:SetPoint("CENTER", 0, -1)
-    AZPExportPresenceButton:SetScript("OnClick", function() addonMain:ExportRaidPresence() end )
-
-    local AZPClearPresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
-    AZPClearPresenceButton.contentText = AZPClearPresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    AZPClearPresenceButton.contentText:SetText("Clear Raid Presence")
-    AZPClearPresenceButton:SetWidth("100")
-    AZPClearPresenceButton:SetHeight("25")
-    AZPClearPresenceButton.contentText:SetWidth("100")
-    AZPClearPresenceButton.contentText:SetHeight("15")
-    AZPClearPresenceButton:SetPoint("TOPRIGHT", -5, -55)
-    AZPClearPresenceButton.contentText:SetPoint("CENTER", 0, -1)
-    AZPClearPresenceButton:SetScript("OnClick", function() addonMain:ClearRaidPresence() end )
+    ModuleStats["Frames"]["InstanceLeading"]:SetSize(120, 180)
 
     local AZPReadyCheckButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
     AZPReadyCheckButton.contentText = AZPReadyCheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -118,12 +88,98 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     CombatLoggingButton.contentText:SetPoint("CENTER", 0, -1)
     CombatLoggingButton:SetScript("OnClick", function() addonMain:ToggleCombatLog() end )
 
+    local AZPSavePresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    AZPSavePresenceButton.contentText = AZPSavePresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    AZPSavePresenceButton.contentText:SetText("Save Raid Presence")
+    AZPSavePresenceButton:SetWidth("100")
+    AZPSavePresenceButton:SetHeight("25")
+    AZPSavePresenceButton.contentText:SetWidth("100")
+    AZPSavePresenceButton.contentText:SetHeight("15")
+    AZPSavePresenceButton:SetPoint("TOPLEFT", 5, -130)
+    AZPSavePresenceButton.contentText:SetPoint("CENTER", 0, -1)
+    AZPSavePresenceButton:SetScript("OnClick", function() addonMain:SaveRaidPresence(nil, GetRaidDifficultyID()) end )
+
+    local AZPExportPresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    AZPExportPresenceButton.contentText = AZPExportPresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    AZPExportPresenceButton.contentText:SetText("Raid Presence")
+    AZPExportPresenceButton:SetWidth("100")
+    AZPExportPresenceButton:SetHeight("25")
+    AZPExportPresenceButton.contentText:SetWidth("100")
+    AZPExportPresenceButton.contentText:SetHeight("15")
+    AZPExportPresenceButton:SetPoint("TOPLEFT", 5, -155)
+    AZPExportPresenceButton.contentText:SetPoint("CENTER", 0, -1)
+    AZPExportPresenceButton:SetScript(
+        "OnClick", function()
+            if InstanceUtilityPresenceExportFrame:IsShown() then
+                InstanceUtilityPresenceExportFrame:Hide()
+            else
+                InstanceUtilityPresenceExportFrame:Show()
+                addonMain:ExportRaidPresence()
+            end
+        end )
+
+    local InstanceUtilityPresenceExportFrame = CreateFrame("FRAME", "InstanceUtilityPresenceExportFrame", UIParent, "BackdropTemplate")
+    InstanceUtilityPresenceExportFrame:SetPoint("CENTER", 0, 0)
+    InstanceUtilityPresenceExportFrame:SetScript("OnEvent", function(...) addonMain:OnEvent(...) end)
+    InstanceUtilityPresenceExportFrame:SetSize(400, 300)
+    InstanceUtilityPresenceExportFrame:SetBackdrop({
+        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+    })
+    InstanceUtilityPresenceExportFrame:SetBackdropColor(0.5, 0.5, 0.5, 0.75)
+    InstanceUtilityPresenceExportFrame:Hide()
+
+    local InstanceUtilityPresenceTitleFrame = CreateFrame("Frame", nil, InstanceUtilityPresenceExportFrame, "BackdropTemplate")
+    InstanceUtilityPresenceTitleFrame:SetHeight("20")
+    InstanceUtilityPresenceTitleFrame:SetWidth(InstanceUtilityPresenceExportFrame:GetWidth())
+    InstanceUtilityPresenceTitleFrame:SetBackdrop({
+        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+    })
+    InstanceUtilityPresenceTitleFrame:SetBackdropColor(0.3, 0.3, 0.3, 1)
+    InstanceUtilityPresenceTitleFrame:SetPoint("TOP", "InstanceUtilityPresenceExportFrame", 0, 0)
+    InstanceUtilityPresenceTitleFrame.contentText = InstanceUtilityPresenceTitleFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    InstanceUtilityPresenceTitleFrame.contentText:SetWidth(InstanceUtilityPresenceTitleFrame:GetWidth())
+    InstanceUtilityPresenceTitleFrame.contentText:SetHeight(InstanceUtilityPresenceTitleFrame:GetHeight())
+    InstanceUtilityPresenceTitleFrame.contentText:SetPoint("CENTER", 0, -1)
+    InstanceUtilityPresenceTitleFrame.contentText:SetText("\124cFF00FFFF Select text and copy paste \124r")
+
+    local IUAddonFrameCloseButton = CreateFrame("Button", nil, InstanceUtilityPresenceTitleFrame, "UIPanelCloseButton")
+    IUAddonFrameCloseButton:SetWidth(InstanceUtilityPresenceTitleFrame:GetHeight() + 3)
+    IUAddonFrameCloseButton:SetHeight(InstanceUtilityPresenceTitleFrame:GetHeight() + 4)
+    IUAddonFrameCloseButton:SetPoint("TOPRIGHT", InstanceUtilityPresenceTitleFrame, "TOPRIGHT", 2, 2)
+    IUAddonFrameCloseButton:SetScript("OnClick", function() InstanceUtilityPresenceExportFrame:Hide() end )
+
+    AZPIUPresenceScrollFrame = CreateFrame("ScrollFrame", nil, InstanceUtilityPresenceExportFrame, "UIPanelScrollFrameTemplate")
+    AZPIUPresenceScrollFrame:SetSize(300, 230)
+    AZPIUPresenceScrollFrame:SetPoint("TOPLEFT", 25, -25)
+
+    AZPIUPresenceEditBox = CreateFrame("EditBox", AZPIUPresenceScrollFrame)
+    AZPIUPresenceEditBox:SetMultiLine(true)
+    AZPIUPresenceEditBox:SetFontObject(ChatFontNormal)
+    AZPIUPresenceEditBox:SetWidth(300)
+    AZPIUPresenceScrollFrame:SetScrollChild(AZPIUPresenceEditBox)
+
+    local AZPClearPresenceButton = CreateFrame("Button", nil, InstanceUtilityPresenceExportFrame, "UIPanelButtonTemplate")
+    AZPClearPresenceButton.contentText = AZPClearPresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    AZPClearPresenceButton.contentText:SetText("Clear Raid Presence")
+    AZPClearPresenceButton:SetWidth("100")
+    AZPClearPresenceButton:SetHeight("25")
+    AZPClearPresenceButton.contentText:SetWidth("100")
+    AZPClearPresenceButton.contentText:SetHeight("15")
+    AZPClearPresenceButton:SetPoint("TOPLEFT", 5, -250)
+    AZPClearPresenceButton.contentText:SetPoint("CENTER", 0, -1)
+    AZPClearPresenceButton:SetScript("OnClick", function() addonMain:ClearRaidPresence() end )
+
     addonMain:ChangeOptionsText()
 
     if AutoAssistCommand == nil then AutoAssistCommand = "" end
     if AutoInviteCommand == nil then AutoInviteCommand = "" end
 
-    
     if AIUSavedRaidPresence == nil then
         AIUSavedRaidPresence = {};
     end
@@ -160,7 +216,7 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
 
         for i, encounter in ipairs(AIU.encounters) do
             if encounterID == encounter.id then
-                addonMain:SaveRaidPresence(encounterID)
+                addonMain:SaveRaidPresence(encounterID, difficultyID)
             end
         end
     end
@@ -190,13 +246,20 @@ function addonMain:splitCharacterNames(input)
     return names
 end
 
-function addonMain:SaveRaidPresence(encounterID)
+function addonMain:SaveRaidPresence(encounterID, difficultyID)
     local saveDate = date("%Y/%m/%d %H:%M")
     print("Save Raid Presence on " .. saveDate)
 
     local raidMembers = GetNumGroupMembers()
     print(string.format("Currently in a raid with %d players", raidMembers))
 
+    local difficulty = "Normal"
+    local name, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
+    if displayHeroic then
+        difficulty = "Heroic"
+    elseif displayMythic then
+        difficulty = "Mythic"
+    end
     local newRaidPresence = {}
     newRaidPresence.date = saveDate
     newRaidPresence.encounterID = encounterID
@@ -212,14 +275,11 @@ function addonMain:SaveRaidPresence(encounterID)
 end
 
 function addonMain:ExportRaidPresence()
-    print("Export Raid Presence")
-
     local exportString = ""
     for _, presence in ipairs(AIUSavedRaidPresence) do
-        -- Fetch the name of the encounter.
         local encounterName = "Manual Saved"
         local raidName = "Manual Saved"
-        for _,encounter in ipairs(AIU.encounters) do
+        for _, encounter in ipairs(AIU.encounters) do
             if encounter.id == presence.encounterID then
                 encounterName = encounter.name
                 raidName = encounter.raid
@@ -228,66 +288,13 @@ function addonMain:ExportRaidPresence()
         exportString = exportString .. string.format("\"%s\",\"%s\",\"%s\",%s\n", presence.date, raidName, encounterName, table.concat(presence.attendees, ","))
     end
 
-    if InstanceUtilityPresenceExportFrame ~= nil then
-        InstanceUtilityPresenceExportFrame:Hide() 
-        InstanceUtilityPresenceExportFrame:SetParent(nil) 
-    end
-
-    InstanceUtilityPresenceExportFrame = CreateFrame("FRAME", "InstanceUtilityPresenceExportFrame", UIParent, "BackdropTemplate")
-    InstanceUtilityPresenceExportFrame:SetPoint("CENTER", 0, 0)
-    InstanceUtilityPresenceExportFrame:SetScript("OnEvent", function(...) addonMain:OnEvent(...) end)
-    InstanceUtilityPresenceExportFrame:SetSize(365, 255)
-    InstanceUtilityPresenceExportFrame:SetBackdrop({
-        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-        edgeSize = 12,
-        insets = { left = 1, right = 1, top = 1, bottom = 1 },
-    })
-    InstanceUtilityPresenceExportFrame:SetBackdropColor(0.5, 0.5, 0.5, 0.75)
-
-    InstanceUtilityPresenceTitleFrame = CreateFrame("Frame", nil, InstanceUtilityPresenceExportFrame, "BackdropTemplate")
-    InstanceUtilityPresenceTitleFrame:SetHeight("20")
-    InstanceUtilityPresenceTitleFrame:SetWidth(InstanceUtilityPresenceExportFrame:GetWidth())
-    InstanceUtilityPresenceTitleFrame:SetBackdrop({
-        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-        edgeSize = 12,
-        insets = { left = 1, right = 1, top = 1, bottom = 1 },
-    })
-    InstanceUtilityPresenceTitleFrame:SetBackdropColor(0.3, 0.3, 0.3, 1)
-    InstanceUtilityPresenceTitleFrame:SetPoint("TOP", "InstanceUtilityPresenceExportFrame", 0, 0)
-    InstanceUtilityPresenceTitleFrame.contentText = InstanceUtilityPresenceTitleFrame:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-    InstanceUtilityPresenceTitleFrame.contentText:SetWidth(InstanceUtilityPresenceTitleFrame:GetWidth())
-    InstanceUtilityPresenceTitleFrame.contentText:SetHeight(InstanceUtilityPresenceTitleFrame:GetHeight())
-    InstanceUtilityPresenceTitleFrame.contentText:SetPoint("CENTER", 0, -1)
-    InstanceUtilityPresenceTitleFrame.contentText:SetText("\124cFF00FFFF Select text and copy paste \124r")
-
-    local IUAddonFrameCloseButton = CreateFrame("Button", nil, InstanceUtilityPresenceTitleFrame, "UIPanelCloseButton")
-    IUAddonFrameCloseButton:SetWidth(InstanceUtilityPresenceTitleFrame:GetHeight() + 3)
-    IUAddonFrameCloseButton:SetHeight(InstanceUtilityPresenceTitleFrame:GetHeight() + 4)
-    IUAddonFrameCloseButton:SetPoint("TOPRIGHT", InstanceUtilityPresenceTitleFrame, "TOPRIGHT", 2, 2)
-    IUAddonFrameCloseButton:SetScript("OnClick", function() 
-        InstanceUtilityPresenceExportFrame:Hide() 
-        InstanceUtilityPresenceExportFrame:SetParent(nil) 
-    end )
-
-    local textScrollFrame = CreateFrame("ScrollFrame", nil, InstanceUtilityPresenceExportFrame, "UIPanelScrollFrameTemplate")
-    textScrollFrame:SetSize(300, 230)
-    textScrollFrame:SetPoint("TOPLEFT", 25, -25)
-
-    local editbox = CreateFrame("EditBox", nil, textScrollFrame)
-    editbox:SetMultiLine(true)
-    editbox:SetFontObject(ChatFontNormal)
-    editbox:SetWidth(300)
-    editbox:SetText(exportString)
-    textScrollFrame:SetScrollChild(editbox)
-    editbox:HighlightText()
+    AZPIUPresenceEditBox:SetText(exportString)
+    AZPIUPresenceEditBox:HighlightText()
 end
 
 function addonMain:ClearRaidPresence()
-    print("Clear Raid Presence")
-
-    AIUSavedRaidPresence = {};
+    AIUSavedRaidPresence = {}
+    AZPIUPresenceEditBox:SetText("Cleared!")
 end
 
 function addonMain:ChangeOptionsText()
