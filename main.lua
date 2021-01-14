@@ -1,6 +1,6 @@
 local GlobalAddonName, AIU = ...
 
-local AZPIUInstanceLeadingVersion = 16
+local AZPIUInstanceLeadingVersion = 17
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
@@ -203,16 +203,17 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
         end
     elseif event == "GROUP_ROSTER_UPDATE" then
         if UnitIsGroupLeader("player") and IsInRaid() then
-            local text = AZPAutoAssistEditBox:GetText()
+            local text = AutoAssistCommand
             local names = addonMain:splitCharacterNames(text)
-            table.foreach(names, function(_, name)
-                if UnitIsGroupAssistant(name) == false then
-                    PromoteToAssistant(name)
+            for _, promoteName in ipairs(names) do
+                promoteName = strsplit("-", promoteName)
+                if UnitIsGroupAssistant(promoteName) == false then
+                    PromoteToAssistant(promoteName)
                 end
-            end)
+            end
         end
     elseif event == "ENCOUNTER_START" then
-        encounterID, encounterName, difficultyID, groupSize = ...
+        local encounterID, encounterName, difficultyID, groupSize = ...
 
         for i, encounter in ipairs(AIU.encounters) do
             if encounterID == encounter.id then
@@ -267,7 +268,7 @@ function addonMain:SaveRaidPresence(encounterID, difficultyID)
 
     for i=1,raidMembers do
         local name, realm = UnitName(string.format("raid%d", i))
-        print(name, realm or GetRealmName())
+        --print(name, realm or GetRealmName())
         newRaidPresence.attendees[i] = string.format("%s-%s", name, realm or GetRealmName())
     end
 
@@ -322,9 +323,6 @@ function addonMain:ChangeOptionsText()
     AZPAutoInviteEditBox:SetPoint("TOPLEFT", 25, -65)
     AZPAutoInviteEditBox:SetAutoFocus(false)
     AZPAutoInviteEditBox:SetScript("OnEditFocusLost", function() AutoInviteCommand = AZPAutoInviteEditBox:GetText() end)
-    InstanceLeadingSubPanel:SetScript("OnShow", function()
-        AZPAutoInviteEditBox:SetText(AutoInviteCommand)
-    end)
     AZPAutoInviteEditBox:SetFrameStrata("DIALOG")
     AZPAutoInviteEditBox:SetMaxLetters(100)
     AZPAutoInviteEditBox:SetFontObject("ChatFontNormal")
@@ -342,10 +340,12 @@ function addonMain:ChangeOptionsText()
     AZPAutoAssistEditBox:SetPoint("TOPLEFT", 25, -165)
     AZPAutoAssistEditBox:SetAutoFocus(false)
     AZPAutoAssistEditBox:SetScript("OnEditFocusLost", function() AutoAssistCommand = AZPAutoAssistEditBox:GetText() end)
-    InstanceLeadingSubPanel:SetScript("OnShow", function()
-        AZPAutoAssistEditBox:SetText(AutoAssistCommand)
-    end)
     AZPAutoAssistEditBox:SetFrameStrata("DIALOG")
     AZPAutoAssistEditBox:SetMaxLetters(100)
     AZPAutoAssistEditBox:SetFontObject("ChatFontNormal")
+
+    InstanceLeadingSubPanel:SetScript("OnShow", function()
+        AZPAutoInviteEditBox:SetText(AutoInviteCommand)
+        AZPAutoAssistEditBox:SetText(AutoAssistCommand)
+    end)
 end
