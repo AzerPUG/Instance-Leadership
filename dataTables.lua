@@ -1,5 +1,29 @@
 local GlobalAddonName, AIU = ...
 
+AIU.VersionRequest = 
+{
+    ["CL"] = {
+        ["AddonName"] = "CheckList",
+        ["Position"] = 1
+    },
+    ["RC"] = {
+        ["AddonName"] = "ReadyCheck",
+        ["Position"] = 2
+    },
+    ["IL"] = {
+        ["AddonName"] = "InstanceLeading",
+        ["Position"] = 3
+    },
+    ["GV"] = {
+        ["AddonName"] = "GreatVault",
+        ["Position"] = 4
+    },
+    ["MG"] = {
+        ["AddonName"] = "ManaGement",
+        ["Position"] = 5
+    }
+}
+
 AIU.encounters =
 {
     {

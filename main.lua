@@ -12,6 +12,8 @@ local ModuleStats = AZP.IU.ModuleStats
 
 local AZPIUPresenceEditBox
 local AZPIUPresenceScrollFrame
+local AZPIUVersionRequestEditBox
+local AZPIUVersionRequestScrollFrame
 
 function AZP.IU.VersionControl:InstanceLeading()
     return AZPIUInstanceLeadingVersion
@@ -22,6 +24,8 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
     InstanceUtilityAddonFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     InstanceUtilityAddonFrame:RegisterEvent("ENCOUNTER_START")
+    InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_ADDON")
+    C_ChatInfo.RegisterAddonMessagePrefix("AZPRESPONSE")
 
     ModuleStats["Frames"]["InstanceLeading"]:SetSize(120, 180)
 
@@ -118,6 +122,24 @@ function AZP.IU.OnLoad:InstanceLeading(self)
             end
         end )
 
+    local AZPRequestAddonVersions = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    AZPRequestAddonVersions.contentText = AZPRequestAddonVersions:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    AZPRequestAddonVersions.contentText:SetText("Request Versions")
+    AZPRequestAddonVersions:SetWidth("100")
+    AZPRequestAddonVersions:SetHeight("25")
+    AZPRequestAddonVersions.contentText:SetWidth("100")
+    AZPRequestAddonVersions.contentText:SetHeight("15")
+    AZPRequestAddonVersions:SetPoint("TOPLEFT", 5, -180)
+    AZPRequestAddonVersions.contentText:SetPoint("CENTER", 0, -1)
+    AZPRequestAddonVersions:SetScript(
+        "OnClick", function()
+            InstanceUtilityVersionRequestFrame:Show()
+            AZPIUVersionRequestEditBox:SetText("CharacterName - Checklist - Readycheck - InstanceLeading - GreatVault - ManaGement\n")
+            
+            C_ChatInfo.SendAddonMessage("AZPREQUEST", "RequestAddonVersions" ,"RAID", 1)
+            
+        end )
+
     local InstanceUtilityPresenceExportFrame = CreateFrame("FRAME", "InstanceUtilityPresenceExportFrame", UIParent, "BackdropTemplate")
     InstanceUtilityPresenceExportFrame:SetPoint("CENTER", 0, 0)
     InstanceUtilityPresenceExportFrame:SetScript("OnEvent", function(...) addonMain:OnEvent(...) end)
@@ -163,6 +185,37 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     AZPIUPresenceEditBox:SetFontObject(ChatFontNormal)
     AZPIUPresenceEditBox:SetWidth(300)
     AZPIUPresenceScrollFrame:SetScrollChild(AZPIUPresenceEditBox)
+
+
+    local InstanceUtilityVersionRequestFrame = CreateFrame("FRAME", "InstanceUtilityVersionRequestFrame", UIParent, "BackdropTemplate")
+    InstanceUtilityVersionRequestFrame:SetPoint("CENTER", 0, 0)
+    InstanceUtilityVersionRequestFrame:SetScript("OnEvent", function(...) addonMain:OnEvent(...) end)
+    InstanceUtilityVersionRequestFrame:SetSize(700, 300)
+    InstanceUtilityVersionRequestFrame:SetBackdrop({
+        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+    })
+    InstanceUtilityVersionRequestFrame:SetBackdropColor(0.5, 0.5, 0.5, 0.75)
+    InstanceUtilityVersionRequestFrame:Hide()
+
+    local CloseButton = CreateFrame("Button", nil, InstanceUtilityVersionRequestFrame, "UIPanelCloseButton")
+    CloseButton:SetWidth(InstanceUtilityPresenceTitleFrame:GetHeight() + 3)
+    CloseButton:SetHeight(InstanceUtilityPresenceTitleFrame:GetHeight() + 4)
+    CloseButton:SetPoint("TOPRIGHT", InstanceUtilityPresenceTitleFrame, "TOPRIGHT", 2, 2)
+    CloseButton:SetScript("OnClick", function() InstanceUtilityVersionRequestFrame:Hide() end )
+
+    AZPIUVersionRequestScrollFrame = CreateFrame("ScrollFrame", nil, InstanceUtilityVersionRequestFrame, "UIPanelScrollFrameTemplate")
+    AZPIUVersionRequestScrollFrame:SetSize(600, 230)
+    AZPIUVersionRequestScrollFrame:SetPoint("TOPLEFT", 25, -25)
+
+    AZPIUVersionRequestEditBox = CreateFrame("EditBox", nil, AZPIUPresenceScrollFrame)
+    AZPIUVersionRequestEditBox:SetMultiLine(true)
+    AZPIUVersionRequestEditBox:SetFontObject(ChatFontNormal)
+    AZPIUVersionRequestEditBox:SetWidth(600)
+    AZPIUVersionRequestScrollFrame:SetScrollChild(AZPIUVersionRequestEditBox)
+
 
     local AZPClearPresenceButton = CreateFrame("Button", nil, InstanceUtilityPresenceExportFrame, "UIPanelButtonTemplate")
     AZPClearPresenceButton.contentText = AZPClearPresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -219,6 +272,25 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
             if encounterID == encounter.id then
                 addonMain:SaveRaidPresence(encounterID, difficultyID)
             end
+        end
+    elseif event == "CHAT_MSG_ADDON" then
+        local prefix, payload, _, sender = ...
+        
+        if prefix == "AZPRESPONSE" then
+            local text = AZPIUVersionRequestEditBox:GetText()
+            local pattern = "|([A-Z]+):([0-9]+)|"
+            local index = 1
+            local versions = {-1, -1, -1, -1, -1}
+            
+            while index < #payload do
+                local _, endPos = string.find(payload, pattern, index)
+                local addon, version = string.match(payload, pattern, index)
+                index = endPos + 1
+                versions[AIU.VersionRequest[addon].Position] = version
+            end
+            text = text .. string.format("%s: %s\n", sender, table.concat(versions, " - "))
+            AZPIUVersionRequestEditBox:SetText(text)
+
         end
     end
 end
