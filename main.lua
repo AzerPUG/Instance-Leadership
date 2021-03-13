@@ -1,6 +1,6 @@
 local GlobalAddonName, AIU = ...
 
-local AZPIUInstanceLeadingVersion = 17
+local AZPIUInstanceLeadingVersion = 18
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)
@@ -24,6 +24,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
     InstanceUtilityAddonFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     InstanceUtilityAddonFrame:RegisterEvent("ENCOUNTER_START")
+    InstanceUtilityAddonFrame:RegisterEvent("ENCOUNTER_END")
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_ADDON")
     C_ChatInfo.RegisterAddonMessagePrefix("AZPRESPONSE")
 
@@ -273,6 +274,14 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
                 addonMain:SaveRaidPresence(encounterID, difficultyID)
             end
         end
+    elseif event == "ENCOUNTER_END" then
+        local encounterID, encounterName, difficultyID, groupSize, success = ...
+
+        for i, encounter in ipairs(AIU.encounters) do
+            if encounterID == encounter.id then
+                addonMain:FinishRaidPresense(encounterID, success)
+            end
+        end
     elseif event == "CHAT_MSG_ADDON" then
         local prefix, payload, _, sender = ...
         
@@ -327,15 +336,19 @@ function addonMain:SaveRaidPresence(encounterID, difficultyID)
     print(string.format("Currently in a raid with %d players", raidMembers))
 
     local difficulty = "Normal"
-    local name, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
+    local _, _, _, _, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
     if displayHeroic then
         difficulty = "Heroic"
     elseif displayMythic then
         difficulty = "Mythic"
+    elseif addonMain:isLookingForRaidDifficulty() then
+        difficulty = "LFR"
     end
     local newRaidPresence = {}
     newRaidPresence.date = saveDate
     newRaidPresence.encounterID = encounterID
+    newRaidPresence.succes = nil
+    newRaidPresence.difficulty = difficulty
     newRaidPresence.attendees = {}
 
     for i=1,raidMembers do
@@ -347,18 +360,36 @@ function addonMain:SaveRaidPresence(encounterID, difficultyID)
     AIUSavedRaidPresence[#AIUSavedRaidPresence + 1] = newRaidPresence
 end
 
+function addonMain:isLookingForRaidDifficulty(difficultyID)
+    return difficultyID == 17
+end
+
+function addonMain:FinishRaidPresense(encounterID, succes)
+    if AIUSavedRaidPresence[#AIUSavedRaidPresence].encounterID == encounterID then
+        AIUSavedRaidPresence[#AIUSavedRaidPresence].succes = succes
+    end
+end
+
 function addonMain:ExportRaidPresence()
     local exportString = ""
-    for _, presence in ipairs(AIUSavedRaidPresence) do
+    for i, presence in ipairs(AIUSavedRaidPresence) do
         local encounterName = "Manual Saved"
         local raidName = "Manual Saved"
+        local wipeOrKill = "Wipe"
+        local difficulty = presence.difficulty
         for _, encounter in ipairs(AIU.encounters) do
             if encounter.id == presence.encounterID then
                 encounterName = encounter.name
                 raidName = encounter.raid
             end
         end
-        exportString = exportString .. string.format("\"%s\",\"%s\",\"%s\",%s\n", presence.date, raidName, encounterName, table.concat(presence.attendees, ","))
+        if presence.succes == 1 then
+            wipeOrKill = "Kill"
+        end
+        if difficulty == nil then
+            difficulty = "Unknown difficulty"
+        end
+        exportString = exportString .. string.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%s\n", presence.date, raidName, encounterName, difficulty, wipeOrKill, table.concat(presence.attendees, ","))
     end
 
     AZPIUPresenceEditBox:SetText(exportString)

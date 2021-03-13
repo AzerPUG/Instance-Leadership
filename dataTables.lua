@@ -70,5 +70,10 @@ AIU.encounters =
         ["raid"] = "Castle Nathria",
         ["name"] = "Huntsman Altimor",
         ["id"] = 2418
+    },
+    {
+        ["raid"] = "Castle Nathria",
+        ["name"] = "Sun King's Salvation",
+        ["id"] = 2402
     }
 }
