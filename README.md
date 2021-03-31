@@ -30,5 +30,3 @@ These two download methods are the only ones that actually support the authors t
   
 CurseForge Website: https://github.com/AzerPUG/Instance-Leadership/issueshttps://www.curseforge.com/wow/addons/azerpug-instanceutility-instanceleading/files  
 CurseForge Application: https://curseforge.overwolf.com/
-
-
