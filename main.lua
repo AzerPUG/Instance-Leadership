@@ -1,6 +1,12 @@
-local GlobalAddonName, AIU = ...
+if AZP == nil then AZP = {} end
+if AZP.VersionControl == nil then AZP.VersionControl = {} end
+if AZP.OnLoad == nil then AZP.OnLoad = {} end
+if AZP.OnEvent == nil then AZP.OnEvent = {} end
+if AZP.OnEvent == nil then AZP.OnEvent = {} end
 
-local AZPIUInstanceLeadingVersion = 18
+AZP.VersionControl.InstanceLeadership = 18
+if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
+
 local dash = " - "
 local name = "InstanceUtility" .. dash .. "InstanceLeading"
 local nameFull = ("AzerPUG " .. name)

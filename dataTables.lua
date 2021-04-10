@@ -1,6 +1,7 @@
-local GlobalAddonName, AIU = ...
+if AZP == nil then AZP = {} end
+if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
 
-AIU.VersionRequest = 
+AZP.InstanceLeadership.VersionRequest =
 {
     ["CL"] = {
         ["AddonName"] = "CheckList",
@@ -24,7 +25,7 @@ AIU.VersionRequest =
     }
 }
 
-AIU.encounters =
+AZP.encounters =
 {
     {
         ["raid"] = "Castle Nathria",
