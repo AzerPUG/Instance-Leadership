@@ -8,24 +8,22 @@ AZP.VersionControl.InstanceLeadership = 18
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
 
 local dash = " - "
-local name = "InstanceUtility" .. dash .. "InstanceLeading"
+local name = "Instance Leadership"
 local nameFull = ("AzerPUG " .. name)
 local promo = (nameFull .. dash ..  AZPIUInstanceLeadingVersion)
 
-local addonMain = LibStub("AceAddon-3.0"):NewAddon("InstanceUtility-InstanceLeading", "AceConsole-3.0")
-
-local ModuleStats = AZP.IU.ModuleStats
+local ModuleStats = AZP.Core.ModuleStats        -- Change to DirectCall!
 
 local AZPIUPresenceEditBox
 local AZPIUPresenceScrollFrame
 local AZPIUVersionRequestEditBox
 local AZPIUVersionRequestScrollFrame
 
-function AZP.IU.VersionControl:InstanceLeading()
+function AZP.VersionControl:InstanceLeadership()
     return AZPIUInstanceLeadingVersion
 end
 
-function AZP.IU.OnLoad:InstanceLeading(self)
+function AZP.OnLoad:InstanceLeadership(self)
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_WHISPER")
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
     InstanceUtilityAddonFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -34,9 +32,9 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     InstanceUtilityAddonFrame:RegisterEvent("CHAT_MSG_ADDON")
     C_ChatInfo.RegisterAddonMessagePrefix("AZPRESPONSE")
 
-    ModuleStats["Frames"]["InstanceLeading"]:SetSize(120, 180)
+    ModuleStats["Frames"]["InstanceLeadership"]:SetSize(120, 180)
 
-    local AZPReadyCheckButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    local AZPReadyCheckButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeadership"], "UIPanelButtonTemplate")
     AZPReadyCheckButton.contentText = AZPReadyCheckButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     AZPReadyCheckButton.contentText:SetText("Ready Check!")
     AZPReadyCheckButton:SetWidth("100")
@@ -47,7 +45,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     AZPReadyCheckButton.contentText:SetPoint("CENTER", 0, -1)
     AZPReadyCheckButton:SetScript("OnClick", function() DoReadyCheck() end )
 
-    local PullButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    local PullButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeadership"], "UIPanelButtonTemplate")
     PullButton.contentText = PullButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     PullButton.contentText:SetText("Pull!")
     PullButton:SetWidth("100")
@@ -58,7 +56,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     PullButton.contentText:SetPoint("CENTER", 0, -1)
     PullButton:SetScript("OnClick", function() C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(10,-1), "RAID"); end )
 
-    local CancelPullButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    local CancelPullButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeadership"], "UIPanelButtonTemplate")
     CancelPullButton.contentText = CancelPullButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     CancelPullButton.contentText:SetText("Cancel Pull!")
     CancelPullButton:SetWidth("100")
@@ -73,7 +71,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
             SendChatMessage("PULL CANCELLED, HAKUNA YOUR TATA'S!" ,"RAID_WARNING")
         end )
 
-    local ShortBreakButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    local ShortBreakButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeadership"], "UIPanelButtonTemplate")
     ShortBreakButton.contentText = ShortBreakButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     ShortBreakButton.contentText:SetText("5m Break!")
     ShortBreakButton:SetWidth("100")
@@ -88,7 +86,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
             SendChatMessage("5 MINUTE BREAK HAS STARTED!" ,"RAID_WARNING")
         end )
 
-    local CombatLoggingButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    local CombatLoggingButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeadership"], "UIPanelButtonTemplate")
     CombatLoggingButton.contentText = CombatLoggingButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     CombatLoggingButton.contentText:SetText("Combat Log!")
     CombatLoggingButton:SetWidth("100")
@@ -97,9 +95,9 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     CombatLoggingButton.contentText:SetHeight("15")
     CombatLoggingButton:SetPoint("TOPLEFT", 5, -105)
     CombatLoggingButton.contentText:SetPoint("CENTER", 0, -1)
-    CombatLoggingButton:SetScript("OnClick", function() addonMain:ToggleCombatLog() end )
+    CombatLoggingButton:SetScript("OnClick", function() AZP.InstanceLeadership:ToggleCombatLog() end )
 
-    local AZPSavePresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    local AZPSavePresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeadership"], "UIPanelButtonTemplate")
     AZPSavePresenceButton.contentText = AZPSavePresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     AZPSavePresenceButton.contentText:SetText("Save Raid Presence")
     AZPSavePresenceButton:SetWidth("100")
@@ -108,9 +106,9 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     AZPSavePresenceButton.contentText:SetHeight("15")
     AZPSavePresenceButton:SetPoint("TOPLEFT", 5, -130)
     AZPSavePresenceButton.contentText:SetPoint("CENTER", 0, -1)
-    AZPSavePresenceButton:SetScript("OnClick", function() addonMain:SaveRaidPresence(nil, GetRaidDifficultyID()) end )
+    AZPSavePresenceButton:SetScript("OnClick", function() AZP.InstanceLeadership:SaveRaidPresence(nil, GetRaidDifficultyID()) end )
 
-    local AZPExportPresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    local AZPExportPresenceButton = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeadership"], "UIPanelButtonTemplate")
     AZPExportPresenceButton.contentText = AZPExportPresenceButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     AZPExportPresenceButton.contentText:SetText("Raid Presence")
     AZPExportPresenceButton:SetWidth("100")
@@ -125,11 +123,11 @@ function AZP.IU.OnLoad:InstanceLeading(self)
                 InstanceUtilityPresenceExportFrame:Hide()
             else
                 InstanceUtilityPresenceExportFrame:Show()
-                addonMain:ExportRaidPresence()
+                AZP.InstanceLeadership:ExportRaidPresence()
             end
         end )
 
-    local AZPRequestAddonVersions = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeading"], "UIPanelButtonTemplate")
+    local AZPRequestAddonVersions = CreateFrame("Button", nil, ModuleStats["Frames"]["InstanceLeadership"], "UIPanelButtonTemplate")
     AZPRequestAddonVersions.contentText = AZPRequestAddonVersions:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
     AZPRequestAddonVersions.contentText:SetText("Request Versions")
     AZPRequestAddonVersions:SetWidth("100")
@@ -141,7 +139,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     AZPRequestAddonVersions:SetScript(
         "OnClick", function()
             InstanceUtilityVersionRequestFrame:Show()
-            AZPIUVersionRequestEditBox:SetText("CharacterName - Checklist - Readycheck - InstanceLeading - GreatVault - ManaGement\n")
+            AZPIUVersionRequestEditBox:SetText("CharacterName - Checklist - Readycheck - InstanceLeadership - GreatVault - ManaGement\n")
             
             C_ChatInfo.SendAddonMessage("AZPREQUEST", "RequestAddonVersions" ,"RAID", 1)
             
@@ -149,7 +147,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
 
     local InstanceUtilityPresenceExportFrame = CreateFrame("FRAME", "InstanceUtilityPresenceExportFrame", UIParent, "BackdropTemplate")
     InstanceUtilityPresenceExportFrame:SetPoint("CENTER", 0, 0)
-    InstanceUtilityPresenceExportFrame:SetScript("OnEvent", function(...) addonMain:OnEvent(...) end)
+    InstanceUtilityPresenceExportFrame:SetScript("OnEvent", function(...) AZP.InstanceLeadership:OnEvent(...) end)
     InstanceUtilityPresenceExportFrame:SetSize(400, 300)
     InstanceUtilityPresenceExportFrame:SetBackdrop({
         bgFile = "Interface/Tooltips/UI-Tooltip-Background",
@@ -196,7 +194,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
 
     local InstanceUtilityVersionRequestFrame = CreateFrame("FRAME", "InstanceUtilityVersionRequestFrame", UIParent, "BackdropTemplate")
     InstanceUtilityVersionRequestFrame:SetPoint("CENTER", 0, 0)
-    InstanceUtilityVersionRequestFrame:SetScript("OnEvent", function(...) addonMain:OnEvent(...) end)
+    InstanceUtilityVersionRequestFrame:SetScript("OnEvent", function(...) AZP.InstanceLeadership:OnEvent(...) end)
     InstanceUtilityVersionRequestFrame:SetSize(700, 300)
     InstanceUtilityVersionRequestFrame:SetBackdrop({
         bgFile = "Interface/Tooltips/UI-Tooltip-Background",
@@ -233,9 +231,9 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     AZPClearPresenceButton.contentText:SetHeight("15")
     AZPClearPresenceButton:SetPoint("TOPLEFT", 5, -250)
     AZPClearPresenceButton.contentText:SetPoint("CENTER", 0, -1)
-    AZPClearPresenceButton:SetScript("OnClick", function() addonMain:ClearRaidPresence() end )
+    AZPClearPresenceButton:SetScript("OnClick", function() AZP.InstanceLeadership:ClearRaidPresence() end )
 
-    addonMain:ChangeOptionsText()
+    AZP.InstanceLeadership:ChangeOptionsText()
 
     if AutoAssistCommand == nil then AutoAssistCommand = "" end
     if AutoInviteCommand == nil then AutoInviteCommand = "" end
@@ -245,7 +243,7 @@ function AZP.IU.OnLoad:InstanceLeading(self)
     end
 end
 
-function AZP.IU.OnEvent:InstanceLeading(event, ...)
+function AZP.OnEvent:InstanceLeadership(event, ...)
     if event == "CHAT_MSG_WHISPER" then
         local msgText, msgSender = ...
         if #AutoInviteCommand > 0 and string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
@@ -264,7 +262,7 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
     elseif event == "GROUP_ROSTER_UPDATE" then
         if UnitIsGroupLeader("player") and IsInRaid() then
             local text = AutoAssistCommand
-            local names = addonMain:splitCharacterNames(text)
+            local names = AZP.InstanceLeadership:splitCharacterNames(text)
             for _, promoteName in ipairs(names) do
                 promoteName = strsplit("-", promoteName)
                 if UnitIsGroupAssistant(promoteName) == false then
@@ -277,7 +275,7 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
 
         for i, encounter in ipairs(AIU.encounters) do
             if encounterID == encounter.id then
-                addonMain:SaveRaidPresence(encounterID, difficultyID)
+                AZP.InstanceLeadership:SaveRaidPresence(encounterID, difficultyID)
             end
         end
     elseif event == "ENCOUNTER_END" then
@@ -285,7 +283,7 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
 
         for i, encounter in ipairs(AIU.encounters) do
             if encounterID == encounter.id then
-                addonMain:FinishRaidPresense(encounterID, success)
+                AZP.InstanceLeadership:FinishRaidPresense(encounterID, success)
             end
         end
     elseif event == "CHAT_MSG_ADDON" then
@@ -310,7 +308,7 @@ function AZP.IU.OnEvent:InstanceLeading(event, ...)
     end
 end
 
-function addonMain:ToggleCombatLog()
+function AZP.InstanceLeadership:ToggleCombatLog()
     if LoggingCombat() == false then
         LoggingCombat(1)
         print("Starting Combat Logging!")
@@ -321,7 +319,7 @@ function addonMain:ToggleCombatLog()
 
 end
 
-function addonMain:splitCharacterNames(input)
+function AZP.InstanceLeadership:splitCharacterNames(input)
     local names = {}
     local inputLen = #input
     local index = 1
@@ -334,7 +332,7 @@ function addonMain:splitCharacterNames(input)
     return names
 end
 
-function addonMain:SaveRaidPresence(encounterID, difficultyID)
+function AZP.InstanceLeadership:SaveRaidPresence(encounterID, difficultyID)
     local saveDate = date("%Y/%m/%d %H:%M")
     print("Save Raid Presence on " .. saveDate)
 
@@ -347,7 +345,7 @@ function addonMain:SaveRaidPresence(encounterID, difficultyID)
         difficulty = "Heroic"
     elseif displayMythic then
         difficulty = "Mythic"
-    elseif addonMain:isLookingForRaidDifficulty() then
+    elseif AZP.InstanceLeadership:isLookingForRaidDifficulty() then
         difficulty = "LFR"
     end
     local newRaidPresence = {}
@@ -366,17 +364,17 @@ function addonMain:SaveRaidPresence(encounterID, difficultyID)
     AIUSavedRaidPresence[#AIUSavedRaidPresence + 1] = newRaidPresence
 end
 
-function addonMain:isLookingForRaidDifficulty(difficultyID)
+function AZP.InstanceLeadership:isLookingForRaidDifficulty(difficultyID)
     return difficultyID == 17
 end
 
-function addonMain:FinishRaidPresense(encounterID, succes)
+function AZP.InstanceLeadership:FinishRaidPresense(encounterID, succes)
     if AIUSavedRaidPresence[#AIUSavedRaidPresence].encounterID == encounterID then
         AIUSavedRaidPresence[#AIUSavedRaidPresence].succes = succes
     end
 end
 
-function addonMain:ExportRaidPresence()
+function AZP.InstanceLeadership:ExportRaidPresence()
     local exportString = ""
     for i, presence in ipairs(AIUSavedRaidPresence) do
         local encounterName = "Manual Saved"
@@ -402,12 +400,12 @@ function addonMain:ExportRaidPresence()
     AZPIUPresenceEditBox:HighlightText()
 end
 
-function addonMain:ClearRaidPresence()
+function AZP.InstanceLeadership:ClearRaidPresence()
     AIUSavedRaidPresence = {}
     AZPIUPresenceEditBox:SetText("Cleared!")
 end
 
-function addonMain:ChangeOptionsText()
+function AZP.InstanceLeadership:ChangeOptionsText()
     InstanceLeadingSubPanelPHTitle:Hide()
     InstanceLeadingSubPanelPHText:Hide()
     InstanceLeadingSubPanelPHTitle:SetParent(nil)

@@ -12,7 +12,7 @@ AZP.InstanceLeadership.VersionRequest =
         ["Position"] = 2
     },
     ["IL"] = {
-        ["AddonName"] = "InstanceLeading",
+        ["AddonName"] = "Instance Leadership",
         ["Position"] = 3
     },
     ["GV"] = {
