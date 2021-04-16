@@ -1,10 +1,10 @@
 ## Interface: 90005
-## Title: |cFF00FFFFAzerPUG's|r |cFFFFFF00Instance Leadership|r
+## Title: |cFF00FFFFAzerPUG's|r |cFFFF00FFInstance Leadership|r
 ## Author: Tex & AzerPUG Gaming Community (www.azerpug.com/discord)
 ## OptionalDeps: AzerPUG's Core
 ## Notes: Utility for Instances (Raids and Dungeons)!
 ## Version: SL 9.0.5 (For actual addon version, check InstanceLeadership.lua)
-## SavedVariables: AutoInviteCommand, AutoAssistCommand, AIUSavedRaidPresence
+## SavedVariables: AutoInviteCommand, AutoAssistCommand, AZPILSavedRaidPresence
 
 InstanceLeadership.lua
 dataTables.lua

@@ -25,7 +25,7 @@ AZP.InstanceLeadership.VersionRequest =
     }
 }
 
-AZP.encounters =
+AZP.InstanceLeadership.Encounters =
 {
     {
         ["raid"] = "Castle Nathria",
