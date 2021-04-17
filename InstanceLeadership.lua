@@ -22,9 +22,6 @@ InstanceLeadingSelfFrame = nil
 
 local optionHeader = "|cFF00FFFFInstance Leadership|r"
 
-function AZP.VersionControl:InstanceLeadership()
-    return AZP.VersionControl.InstanceLeadership
-end
 
 function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     C_ChatInfo.RegisterAddonMessagePrefix("AZPRESPONSE")
@@ -242,7 +239,7 @@ function AZP.InstanceLeadership:OnLoadCore()
     AZP.Core:RegisterEvents("ENCOUNTER_END", function(...) AZP.InstanceLeadership:eventEncounterEnd(...) end)
     AZP.Core:RegisterEvents("CHAT_MSG_ADDON", function(...) AZP.InstanceLeadership:eventChatMsgAddon(...) end)
 
-    AZP.InstanceLeadership:OnLoadBoth(AZP.Core.ModuleStats.Frames["InstanceLeading"])
+    AZP.InstanceLeadership:OnLoadBoth(AZP.Core.AddOns.IL.MainFrame)
 
     AZP.OptionsPanels:Generic("Instance Leadership", optionHeader, function(frame) AZP.InstanceLeadership:FillOptionsPanel(frame) end)
 end
