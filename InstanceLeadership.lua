@@ -232,7 +232,7 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
 end
 
 function AZP.InstanceLeadership:OnLoadCore()
-    AZP.Core:RegisterEvents("CHAT_MSG_WHISPER", function(...) AZP.InstanceLeadership:eventReeventChatMsgWhisperadyCheck(...) end)
+    AZP.Core:RegisterEvents("CHAT_MSG_WHISPER", function(...) AZP.InstanceLeadership:eventChatMsgWhisper(...) end)
     AZP.Core:RegisterEvents("CHAT_MSG_BN_WHISPER", function(...) AZP.InstanceLeadership:eventChatMsgBnWhisper(...) end)
     AZP.Core:RegisterEvents("GROUP_ROSTER_UPDATE", function(...) AZP.InstanceLeadership:eventGroupRosterUpdate(...) end)
     AZP.Core:RegisterEvents("ENCOUNTER_START", function(...) AZP.InstanceLeadership:eventEncounterStart(...) end)
