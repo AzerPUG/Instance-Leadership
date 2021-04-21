@@ -560,3 +560,11 @@ end
 if not IsAddOnLoaded("AzerPUG's Core") then
     AZP.InstanceLeadership:OnLoadSelf()
 end
+
+AZP.SlashCommands["IL"] = function()
+    if InstanceLeadershipSelfFrame ~= nil then InstanceLeadershipSelfFrame:Show() end
+end
+
+AZP.SlashCommands["il"] = AZP.SlashCommands["IL"]
+AZP.SlashCommands["lead"] = AZP.SlashCommands["IL"]
+AZP.SlashCommands["instance leadership"] = AZP.SlashCommands["IL"]
