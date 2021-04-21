@@ -6,5 +6,6 @@
 ## Version: SL 9.0.5 (For actual addon version, check InstanceLeadership.lua)
 ## SavedVariables: AutoInviteCommand, AutoAssistCommand, AZPILSavedRaidPresence
 
-InstanceLeadership.lua
 dataTables.lua
+SlashCommands.lua
+InstanceLeadership.lua
