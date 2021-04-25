@@ -4,21 +4,23 @@ if AZP.OnLoad == nil then AZP.OnLoad = {} end
 if AZP.OnEvent == nil then AZP.OnEvent = {} end
 if AZP.OnEvent == nil then AZP.OnEvent = {} end
 
-AZP.VersionControl.InstanceLeadership = 18
+AZP.VersionControl["Instance Leadership"] = 18
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
 
 local dash = " - "
 local name = "Instance Leadership"
 local nameFull = ("AzerPUG " .. name)
-local promo = (nameFull .. dash ..  AZP.VersionControl.InstanceLeadership)
+local promo = (nameFull .. dash ..  AZP.VersionControl["Instance Leadership"])
 
+local EventFrame, UpdateFrame = nil, nil
+local HaveShowedUpdateNotification = false
 local AZPIUPresenceEditBox
 local AZPIUPresenceScrollFrame
 local AZPIUVersionRequestEditBox
 local AZPIUVersionRequestScrollFrame
 
 local AZPILSelfOptionPanel = nil
-InstanceLeadingSelfFrame = nil
+InstanceLeadershipSelfFrame = nil
 
 local optionHeader = "|cFF00FFFFInstance Leadership|r"
 
@@ -74,7 +76,11 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     ShortBreakButton.contentText:SetPoint("CENTER", 0, -1)
     ShortBreakButton:SetScript("OnClick",
         function()
-            DBM:CreatePizzaTimer(300, "Break Time!", true)
+            if DBM ~= nil then
+                DBM:CreatePizzaTimer(300, "Break Time!", true)
+            else
+                print("Make sure to install and enable DBM!")
+            end
             SendChatMessage("5 MINUTE BREAK HAS STARTED!" ,"RAID_WARNING")
         end )
 
@@ -237,44 +243,78 @@ function AZP.InstanceLeadership:OnLoadCore()
     AZP.Core:RegisterEvents("GROUP_ROSTER_UPDATE", function(...) AZP.InstanceLeadership:eventGroupRosterUpdate(...) end)
     AZP.Core:RegisterEvents("ENCOUNTER_START", function(...) AZP.InstanceLeadership:eventEncounterStart(...) end)
     AZP.Core:RegisterEvents("ENCOUNTER_END", function(...) AZP.InstanceLeadership:eventEncounterEnd(...) end)
-    AZP.Core:RegisterEvents("CHAT_MSG_ADDON", function(...) AZP.InstanceLeadership:eventChatMsgAddon(...) end)
+    AZP.Core:RegisterEvents("CHAT_MSG_ADDON", function(...) AZP.InstanceLeadership:eventChatMsgAddonVersionRequest(...) end)
 
     AZP.InstanceLeadership:OnLoadBoth(AZP.Core.AddOns.IL.MainFrame)
-
+    AZP.OptionsPanels:RemovePanel("Instance Leadership")
     AZP.OptionsPanels:Generic("Instance Leadership", optionHeader, function(frame) AZP.InstanceLeadership:FillOptionsPanel(frame) end)
 end
 
 function AZP.InstanceLeadership:OnLoadSelf()
-    print("OnLoadSelf")
-    C_ChatInfo.RegisterAddonMessagePrefix("AZPRESPONSE")
+    C_ChatInfo.RegisterAddonMessagePrefix("AZPVERSIONS")
 
-    InstanceLeadingSelfFrame = CreateFrame("Button", nil, UIParent, "BackdropTemplate")
-    InstanceLeadingSelfFrame:SetSize(110, 220)
-    InstanceLeadingSelfFrame:SetPoint("CENTER", 0, 0)
-    InstanceLeadingSelfFrame:SetScript("OnDragStart", InstanceLeadingSelfFrame.StartMoving)
-    InstanceLeadingSelfFrame:SetScript("OnDragStop", InstanceLeadingSelfFrame.StopMovingOrSizing)
-    InstanceLeadingSelfFrame:RegisterForDrag("LeftButton")
-    InstanceLeadingSelfFrame:EnableMouse(true)
-    InstanceLeadingSelfFrame:SetMovable(true)
-    InstanceLeadingSelfFrame:SetBackdrop({
+    EventFrame = CreateFrame("FRAME", nil)
+    EventFrame:RegisterEvent("CHAT_MSG_WHISPER")
+    EventFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
+    EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    EventFrame:RegisterEvent("ENCOUNTER_START")
+    EventFrame:RegisterEvent("ENCOUNTER_END")
+    EventFrame:RegisterEvent("CHAT_MSG_ADDON")
+    EventFrame:RegisterEvent("ADDON_LOADED")
+    EventFrame:SetScript("OnEvent", function(...) AZP.InstanceLeadership:OnEvent(...) end)
+
+    UpdateFrame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    UpdateFrame:SetPoint("CENTER", 0, 250)
+    UpdateFrame:SetSize(400, 200)
+    UpdateFrame:SetBackdrop({
         bgFile = "Interface/Tooltips/UI-Tooltip-Background",
         edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
         edgeSize = 12,
         insets = { left = 1, right = 1, top = 1, bottom = 1 },
     })
-    InstanceLeadingSelfFrame:SetBackdropColor(0.5, 0.5, 0.5, 0.75)
+    UpdateFrame:SetBackdropColor(0.25, 0.25, 0.25, 0.80)
+    UpdateFrame.header = UpdateFrame:CreateFontString("UpdateFrame", "ARTWORK", "GameFontNormalHuge")
+    UpdateFrame.header:SetPoint("TOP", 0, -10)
+    UpdateFrame.header:SetText("|cFFFF0000AzerPUG's InstanceLeadership is out of date!|r")
 
-    local IUAddonFrameCloseButton = CreateFrame("Button", nil, InstanceLeadingSelfFrame, "UIPanelCloseButton")
+    UpdateFrame.text = UpdateFrame:CreateFontString("UpdateFrame", "ARTWORK", "GameFontNormalLarge")
+    UpdateFrame.text:SetPoint("TOP", 0, -40)
+    UpdateFrame.text:SetText("Error!")
+
+    UpdateFrame:Hide()
+
+    local UpdateFrameCloseButton = CreateFrame("Button", nil, UpdateFrame, "UIPanelCloseButton")
+    UpdateFrameCloseButton:SetWidth(25)
+    UpdateFrameCloseButton:SetHeight(25)
+    UpdateFrameCloseButton:SetPoint("TOPRIGHT", UpdateFrame, "TOPRIGHT", 2, 2)
+    UpdateFrameCloseButton:SetScript("OnClick", function() UpdateFrame:Hide() end )
+
+
+    InstanceLeadershipSelfFrame = CreateFrame("Button", nil, UIParent, "BackdropTemplate")
+    InstanceLeadershipSelfFrame:SetSize(110, 220)
+    InstanceLeadershipSelfFrame:SetPoint("CENTER", 0, 0)
+    InstanceLeadershipSelfFrame:SetScript("OnDragStart", InstanceLeadershipSelfFrame.StartMoving)
+    InstanceLeadershipSelfFrame:SetScript("OnDragStop", function()
+        InstanceLeadershipSelfFrame:StopMovingOrSizing()
+        AZP.InstanceLeadership:SaveMainFrameLocation()
+    end)
+    InstanceLeadershipSelfFrame:RegisterForDrag("LeftButton")
+    InstanceLeadershipSelfFrame:EnableMouse(true)
+    InstanceLeadershipSelfFrame:SetMovable(true)
+    InstanceLeadershipSelfFrame:SetBackdrop({
+        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+    })
+    InstanceLeadershipSelfFrame:SetBackdropColor(0.5, 0.5, 0.5, 0.75)
+
+    local IUAddonFrameCloseButton = CreateFrame("Button", nil, InstanceLeadershipSelfFrame, "UIPanelCloseButton")
     IUAddonFrameCloseButton:SetSize(20, 21)
-    IUAddonFrameCloseButton:SetPoint("TOPRIGHT", InstanceLeadingSelfFrame, "TOPRIGHT", 2, 2)
-    IUAddonFrameCloseButton:SetScript("OnClick", function() InstanceLeadingSelfFrame:Hide() end )
+    IUAddonFrameCloseButton:SetPoint("TOPRIGHT", InstanceLeadershipSelfFrame, "TOPRIGHT", 2, 2)
+    IUAddonFrameCloseButton:SetScript("OnClick", function() AZP.InstanceLeadership:ShowHideFrame() end )
 
-    InstanceLeadingSelfFrame:RegisterEvent("CHAT_MSG_WHISPER")
-    InstanceLeadingSelfFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
-    InstanceLeadingSelfFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    InstanceLeadingSelfFrame:RegisterEvent("ENCOUNTER_START")
-    InstanceLeadingSelfFrame:RegisterEvent("ENCOUNTER_END")
-    InstanceLeadingSelfFrame:RegisterEvent("CHAT_MSG_ADDON")
+
 
     AZPILSelfOptionPanel = CreateFrame("FRAME", nil)
     AZPILSelfOptionPanel.name = optionHeader
@@ -293,8 +333,18 @@ function AZP.InstanceLeadership:OnLoadSelf()
     )
 
     AZP.InstanceLeadership:FillOptionsPanel(AZPILSelfOptionPanel)
-    AZP.InstanceLeadership:OnLoadBoth(InstanceLeadingSelfFrame)
+    AZP.InstanceLeadership:OnLoadBoth(InstanceLeadershipSelfFrame)
     --AZP.InstanceLeadership:ShareVersion()
+end
+
+function AZP.InstanceLeadership:ShowHideFrame()
+    if InstanceLeadershipSelfFrame:IsShown() then
+        InstanceLeadershipSelfFrame:Hide()
+        AZPILShown = false
+    elseif not InstanceLeadershipSelfFrame:IsShown() then
+        InstanceLeadershipSelfFrame:Show()
+        AZPILShown = true
+    end
 end
 
 function AZP.InstanceLeadership:FillOptionsPanel(frameToFill)
@@ -339,6 +389,12 @@ function AZP.InstanceLeadership:FillOptionsPanel(frameToFill)
     frameToFill:Hide()
 end
 
+function AZP.InstanceLeadership:SaveMainFrameLocation()
+    local temp = {}
+    temp[1], temp[2], temp[3], temp[4], temp[5] = InstanceLeadershipSelfFrame:GetPoint()
+    AZPILLocation = temp
+end
+
 function AZP.InstanceLeadership:eventChatMsgWhisper(...)
     local msgText, msgSender = ...
     if #AutoInviteCommand > 0 and string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
@@ -359,10 +415,14 @@ function AZP.InstanceLeadership:eventChatMsgBnWhisper(...)
 end
 
 function AZP.InstanceLeadership:eventGroupRosterUpdate(...)
-    local encounterID, encounterName, difficultyID, groupSize = ...
-    for i, encounter in ipairs(AZP.InstanceLeadership.Encounters) do
-        if encounterID == encounter.id then
-            AZP.InstanceLeadership:SaveRaidPresence(encounterID, difficultyID)
+    if UnitIsGroupLeader("player") and IsInRaid() then
+        local text = AutoAssistCommand
+        local names = AZP.InstanceLeadership:splitCharacterNames(text)
+        for _, promoteName in ipairs(names) do
+            promoteName = strsplit("-", promoteName)
+            if UnitIsGroupAssistant(promoteName) == false then
+                PromoteToAssistant(promoteName)
+            end
         end
     end
 end
@@ -385,7 +445,7 @@ function AZP.InstanceLeadership:eventEncounterEnd(...)
     end
 end
 
-function AZP.InstanceLeadership:eventChatMsgAddon(...)
+function AZP.InstanceLeadership:eventChatMsgAddonVersionRequest(...)
     local prefix, payload, _, sender = ...
     if prefix == "AZPRESPONSE" then
         local text = AZPIUVersionRequestEditBox:GetText()
@@ -396,67 +456,53 @@ function AZP.InstanceLeadership:eventChatMsgAddon(...)
             local _, endPos = string.find(payload, pattern, index)
             local addon, version = string.match(payload, pattern, index)
             index = endPos + 1
-            versions[AZP.InstanceLeadership.VersionRequest[addon].Position] = version
+            local matchingAddon = AZP.InstanceLeadership.VersionRequest[addon]
+            if matchingAddon ~= nil then
+                versions[matchingAddon.Position] = version
+            end
         end
         text = text .. string.format("%s: %s\n", sender, table.concat(versions, " - "))
         AZPIUVersionRequestEditBox:SetText(text)
     end
 end
 
-function AZP.OnEvent:InstanceLeadership(event, ...)
+function AZP.InstanceLeadership:eventChatMsgAddonVersionControl(...)
+    local prefix, payload, _, sender = ...
+    if prefix == "AZPVERSIONS" then
+        local version = AZP.InstanceLeadership:GetSpecificAddonVersion(payload, "IL")
+        if version ~= nil then
+            AZP.InstanceLeadership:ReceiveVersion(version)
+        end
+    end
+end
+
+function AZP.InstanceLeadership:eventVariablesLoaded(...)
+    if AZPILShown == false then
+        InstanceLeadershipSelfFrame:Hide()
+    end
+
+    if AZPILLocation == nil then
+        AZPILLocation = {"CENTER", nil, nil, 200, 0}
+    end
+    InstanceLeadershipSelfFrame:SetPoint(AZPILLocation[1], AZPILLocation[4], AZPILLocation[5])
+end
+
+function AZP.InstanceLeadership:OnEvent(self, event, ...)
     if event == "CHAT_MSG_WHISPER" then
         AZP.InstanceLeadership:eventChatMsgWhisper(...)
     elseif event == "CHAT_MSG_BN_WHISPER" then
-        local msgText, _, _, _, _, _, _, _, _, _, _, _, friendIndex = ...
-        if #AutoInviteCommand > 0 and string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
-            local accountInfo = C_BattleNet.GetAccountInfoByID(friendIndex)
-            if accountInfo ~= nil then
-                local charName = accountInfo.gameAccountInfo.characterName
-                local serverName = accountInfo.gameAccountInfo.realmName
-                C_PartyInfo.InviteUnit(charName .. "-" .. serverName)
-            end
-        end
+        AZP.InstanceLeadership:eventChatMsgBnWhisper(...)
     elseif event == "GROUP_ROSTER_UPDATE" then
-        if UnitIsGroupLeader("player") and IsInRaid() then
-            local text = AutoAssistCommand
-            local names = AZP.InstanceLeadership:splitCharacterNames(text)
-            for _, promoteName in ipairs(names) do
-                promoteName = strsplit("-", promoteName)
-                if UnitIsGroupAssistant(promoteName) == false then
-                    PromoteToAssistant(promoteName)
-                end
-            end
-        end
+        AZP.InstanceLeadership:eventGroupRosterUpdate(...)
     elseif event == "ENCOUNTER_START" then
-        local encounterID, encounterName, difficultyID, groupSize = ...
-        for i, encounter in ipairs(AZP.InstanceLeadership.Encounters) do
-            if encounterID == encounter.id then
-                AZP.InstanceLeadership:SaveRaidPresence(encounterID, difficultyID)
-            end
-        end
+        AZP.InstanceLeadership:eventEncounterStart(...)
     elseif event == "ENCOUNTER_END" then
-        local encounterID, encounterName, difficultyID, groupSize, success = ...
-        for i, encounter in ipairs(AZP.InstanceLeadership.Encounters) do
-            if encounterID == encounter.id then
-                AZP.InstanceLeadership:FinishRaidPresense(encounterID, success)
-            end
-        end
+        AZP.InstanceLeadership:eventEncounterEnd(...)
     elseif event == "CHAT_MSG_ADDON" then
-        local prefix, payload, _, sender = ...
-        if prefix == "AZPRESPONSE" then
-            local text = AZPIUVersionRequestEditBox:GetText()
-            local pattern = "|([A-Z]+):([0-9]+)|"
-            local index = 1
-            local versions = {-1, -1, -1, -1, -1}
-            while index < #payload do
-                local _, endPos = string.find(payload, pattern, index)
-                local addon, version = string.match(payload, pattern, index)
-                index = endPos + 1
-                versions[AZP.InstanceLeadership.VersionRequest[addon].Position] = version
-            end
-            text = text .. string.format("%s: %s\n", sender, table.concat(versions, " - "))
-            AZPIUVersionRequestEditBox:SetText(text)
-        end
+        AZP.InstanceLeadership:eventChatMsgAddonVersionRequest(...)
+        AZP.InstanceLeadership:eventChatMsgAddonVersionControl(...)
+    elseif event == "ADDON_LOADED" then
+        AZP.InstanceLeadership:eventVariablesLoaded(...)
     end
 end
 
@@ -557,12 +603,56 @@ function AZP.InstanceLeadership:ClearRaidPresence()
     AZPIUPresenceEditBox:SetText("Cleared!")
 end
 
+function AZP.InstanceLeadership:ShareVersion()    -- Change DelayedExecution to native WoW Function.
+    local versionString = string.format("|IL:%d|", AZP.VersionControl["Instance Leadership"])
+    AZP.InstanceLeadership:DelayedExecution(10, function() 
+        if IsInGroup() then
+            if IsInRaid() then
+                C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"RAID", 1)
+            else
+                C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"PARTY", 1)
+            end
+        end
+        if IsInGuild() then
+            C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"GUILD", 1)
+        end
+    end)
+end
+
+function AZP.InstanceLeadership:ReceiveVersion(version)
+    if version > AZP.VersionControl["Instance Leadership"] then
+        if (not HaveShowedUpdateNotification) then
+            HaveShowedUpdateNotification = true
+            UpdateFrame:Show()
+            UpdateFrame.text:SetText(
+                "Please download the new version through the CurseForge app.\n" ..
+                "Or use the CurseForge website to download it manually!\n\n" .. 
+                "Newer Version: v" .. version .. "\n" .. 
+                "Your version: v" .. AZP.VersionControl["Instance Leadership"]
+            )
+        end
+    end
+end
+
+function AZP.InstanceLeadership:GetSpecificAddonVersion(versionString, addonWanted)
+    local pattern = "|([A-Z]+):([0-9]+)|"
+    local index = 1
+    while index < #versionString do
+        local _, endPos = string.find(versionString, pattern, index)
+        local addon, version = string.match(versionString, pattern, index)
+        index = endPos + 1
+        if addon == addonWanted then
+            return tonumber(version)
+        end
+    end
+end
+
 if not IsAddOnLoaded("AzerPUG's Core") then
     AZP.InstanceLeadership:OnLoadSelf()
 end
 
 AZP.SlashCommands["IL"] = function()
-    if InstanceLeadershipSelfFrame ~= nil then InstanceLeadershipSelfFrame:Show() end
+    if InstanceLeadershipSelfFrame ~= nil then AZP.InstanceLeadership:ShowHideFrame() end
 end
 
 AZP.SlashCommands["il"] = AZP.SlashCommands["IL"]

@@ -4,7 +4,7 @@
 ## OptionalDeps: AzerPUG's Core
 ## Notes: Utility for Instances (Raids and Dungeons)!
 ## Version: SL 9.0.5 (For actual addon version, check InstanceLeadership.lua)
-## SavedVariables: AutoInviteCommand, AutoAssistCommand, AZPILSavedRaidPresence
+## SavedVariables: AutoInviteCommand, AutoAssistCommand, AZPILSavedRaidPresence, AZPILLocation, AZPILShown
 
 dataTables.lua
 SlashCommands.lua
