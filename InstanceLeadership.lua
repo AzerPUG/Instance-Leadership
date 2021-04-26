@@ -594,6 +594,21 @@ function AZP.InstanceLeadership:ClearRaidPresence()
     AZPIUPresenceEditBox:SetText("Cleared!")
 end
 
+function AZP.InstanceLeadership:DelayedExecution(delayTime, delayedFunction)
+    local frame = CreateFrame("Frame")
+    frame.start_time = GetServerTime()
+    frame:SetScript("OnUpdate",
+        function(self)
+            if GetServerTime() - self.start_time > delayTime then
+                delayedFunction()
+                self:SetScript("OnUpdate", nil)
+                self:Hide()
+            end
+        end
+    )
+    frame:Show()
+end
+
 function AZP.InstanceLeadership:ShareVersion()    -- Change DelayedExecution to native WoW Function.
     local versionString = string.format("|IL:%d|", AZP.VersionControl["Instance Leadership"])
     AZP.InstanceLeadership:DelayedExecution(10, function() 
