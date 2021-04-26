@@ -325,7 +325,6 @@ function AZP.InstanceLeadership:OnLoadSelf()
 
     AZP.InstanceLeadership:FillOptionsPanel(AZPILSelfOptionPanel)
     AZP.InstanceLeadership:OnLoadBoth(InstanceLeadershipSelfFrame)
-    --AZP.InstanceLeadership:ShareVersion()
 end
 
 function AZP.InstanceLeadership:ShowHideFrame()
@@ -485,6 +484,7 @@ function AZP.InstanceLeadership:OnEvent(self, event, ...)
         AZP.InstanceLeadership:eventChatMsgBnWhisper(...)
     elseif event == "GROUP_ROSTER_UPDATE" then
         AZP.InstanceLeadership:eventGroupRosterUpdate(...)
+        AZP.InstanceLeadership:ShareVersion()
     elseif event == "ENCOUNTER_START" then
         AZP.InstanceLeadership:eventEncounterStart(...)
     elseif event == "ENCOUNTER_END" then
