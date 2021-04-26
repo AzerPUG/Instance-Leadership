@@ -1,16 +1,8 @@
 if AZP == nil then AZP = {} end
 if AZP.VersionControl == nil then AZP.VersionControl = {} end
-if AZP.OnLoad == nil then AZP.OnLoad = {} end
-if AZP.OnEvent == nil then AZP.OnEvent = {} end
-if AZP.OnEvent == nil then AZP.OnEvent = {} end
 
 AZP.VersionControl["Instance Leadership"] = 18
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
-
-local dash = " - "
-local name = "Instance Leadership"
-local nameFull = ("AzerPUG " .. name)
-local promo = (nameFull .. dash ..  AZP.VersionControl["Instance Leadership"])
 
 local EventFrame, UpdateFrame = nil, nil
 local HaveShowedUpdateNotification = false
@@ -20,10 +12,9 @@ local AZPIUVersionRequestEditBox
 local AZPIUVersionRequestScrollFrame
 
 local AZPILSelfOptionPanel = nil
-InstanceLeadershipSelfFrame = nil
+local InstanceLeadershipSelfFrame = nil
 
 local optionHeader = "|cFF00FFFFInstance Leadership|r"
-
 
 function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     C_ChatInfo.RegisterAddonMessagePrefix("AZPRESPONSE")
