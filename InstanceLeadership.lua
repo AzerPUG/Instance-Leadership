@@ -174,7 +174,7 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
 
     AZPIUPresenceEditBox = CreateFrame("EditBox", AZPIUPresenceScrollFrame)
     AZPIUPresenceEditBox:SetMultiLine(true)
-    AZPIUPresenceEditBox:SetFontObject(ChatFontNormal)
+    AZPIUPresenceEditBox:SetFontObject("ChatFontNormal")
     AZPIUPresenceEditBox:SetWidth(300)
     AZPIUPresenceScrollFrame:SetScrollChild(AZPIUPresenceEditBox)
 
@@ -204,7 +204,7 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
 
     AZPIUVersionRequestEditBox = CreateFrame("EditBox", nil, AZPIUPresenceScrollFrame)
     AZPIUVersionRequestEditBox:SetMultiLine(true)
-    AZPIUVersionRequestEditBox:SetFontObject(ChatFontNormal)
+    AZPIUVersionRequestEditBox:SetFontObject("ChatFontNormal")
     AZPIUVersionRequestEditBox:SetWidth(600)
     AZPIUVersionRequestScrollFrame:SetScrollChild(AZPIUVersionRequestEditBox)
 
