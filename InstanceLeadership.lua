@@ -1,7 +1,7 @@
 if AZP == nil then AZP = {} end
 if AZP.VersionControl == nil then AZP.VersionControl = {} end
 
-AZP.VersionControl["Instance Leadership"] = 19
+AZP.VersionControl["Instance Leadership"] = 20
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
 
 local EventFrame, UpdateFrame = nil, nil
