@@ -305,8 +305,6 @@ function AZP.InstanceLeadership:OnLoadSelf()
     IUAddonFrameCloseButton:SetPoint("TOPRIGHT", InstanceLeadershipSelfFrame, "TOPRIGHT", 2, 2)
     IUAddonFrameCloseButton:SetScript("OnClick", function() AZP.InstanceLeadership:ShowHideFrame() end )
 
-
-
     AZPILSelfOptionPanel = CreateFrame("FRAME", nil)
     AZPILSelfOptionPanel.name = optionHeader
     InterfaceOptions_AddCategory(AZPILSelfOptionPanel)
@@ -360,12 +358,13 @@ function AZP.InstanceLeadership:FillOptionsPanel(frameToFill)
     AZPAutoAssistLabel:SetPoint("TOPLEFT", 25, -150)
     AZPAutoAssistLabel.contentText = AZPAutoAssistLabel:CreateFontString("AZPAutoAssistLabel", "ARTWORK", "GameFontNormalLarge")
     AZPAutoAssistLabel.contentText:SetPoint("TOPLEFT")
-    AZPAutoAssistLabel.contentText:SetText("Auto Promote Assistant (Add characters as: 'CharName-ServerName', split multiple chars by a comma ',' ).")
+    AZPAutoAssistLabel.contentText:SetJustifyH("LEFT")
+    AZPAutoAssistLabel.contentText:SetText("Auto Promote Assistant, Add characters as follows:\n'CharName-ServerName', split multiple chars by a comma ','.")
 
     local AZPAutoAssistEditBox = CreateFrame("EditBox", "AZPAutoAssistEditBox", frameToFill, "InputBoxTemplate")
     AZPAutoAssistEditBox:SetSize(150, 35)
     AZPAutoAssistEditBox:SetWidth(150)
-    AZPAutoAssistEditBox:SetPoint("TOPLEFT", 25, -165)
+    AZPAutoAssistEditBox:SetPoint("TOPLEFT", 25, -175)
     AZPAutoAssistEditBox:SetAutoFocus(false)
     AZPAutoAssistEditBox:SetScript("OnEditFocusLost", function() AutoAssistCommand = AZPAutoAssistEditBox:GetText() end)
     AZPAutoAssistEditBox:SetFrameStrata("DIALOG")
@@ -611,16 +610,20 @@ end
 
 function AZP.InstanceLeadership:ShareVersion()    -- Change DelayedExecution to native WoW Function.
     local versionString = string.format("|IL:%d|", AZP.VersionControl["Instance Leadership"])
-    AZP.InstanceLeadership:DelayedExecution(10, function() 
-        if IsInGroup() then
-            if IsInRaid() then
-                C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"RAID", 1)
-            else
-                C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"PARTY", 1)
+    AZP.InstanceLeadership:DelayedExecution(10, function()
+        if UnitInBattleground("player") ~= nil then
+            -- BG stuff?
+        else
+            if IsInGroup() then
+                if IsInRaid() then
+                    C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"RAID", 1)
+                else
+                    C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"PARTY", 1)
+                end
             end
-        end
-        if IsInGuild() then
-            C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"GUILD", 1)
+            if IsInGuild() then
+                C_ChatInfo.SendAddonMessage("AZPVERSIONS", versionString ,"GUILD", 1)
+            end
         end
     end)
 end
