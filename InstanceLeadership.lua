@@ -3,6 +3,7 @@ if AZP.VersionControl == nil then AZP.VersionControl = {} end
 
 AZP.VersionControl["Instance Leadership"] = 20
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
+if AZP.InstanceLeadership.Events == nil then AZP.InstanceLeadership.Events = {} end
 
 local EventFrame, UpdateFrame = nil, nil
 local HaveShowedUpdateNotification = false
@@ -229,12 +230,12 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
 end
 
 function AZP.InstanceLeadership:OnLoadCore()
-    AZP.Core:RegisterEvents("CHAT_MSG_WHISPER", function(...) AZP.InstanceLeadership:eventChatMsgWhisper(...) end)
-    AZP.Core:RegisterEvents("CHAT_MSG_BN_WHISPER", function(...) AZP.InstanceLeadership:eventChatMsgBnWhisper(...) end)
-    AZP.Core:RegisterEvents("GROUP_ROSTER_UPDATE", function(...) AZP.InstanceLeadership:eventGroupRosterUpdate(...) end)
-    AZP.Core:RegisterEvents("ENCOUNTER_START", function(...) AZP.InstanceLeadership:eventEncounterStart(...) end)
-    AZP.Core:RegisterEvents("ENCOUNTER_END", function(...) AZP.InstanceLeadership:eventEncounterEnd(...) end)
-    AZP.Core:RegisterEvents("CHAT_MSG_ADDON", function(...) AZP.InstanceLeadership:eventChatMsgAddonVersionRequest(...) end)
+    AZP.Core:RegisterEvents("CHAT_MSG_WHISPER", function(...) AZP.InstanceLeadership.Events:ChatMsgWhisper(...) end)
+    AZP.Core:RegisterEvents("CHAT_MSG_BN_WHISPER", function(...) AZP.InstanceLeadership.Events:ChatMsgBnWhisper(...) end)
+    AZP.Core:RegisterEvents("GROUP_ROSTER_UPDATE", function(...) AZP.InstanceLeadership.Events:GroupRosterUpdate(...) end)
+    AZP.Core:RegisterEvents("ENCOUNTER_START", function(...) AZP.InstanceLeadership.Events:EncounterStart(...) end)
+    AZP.Core:RegisterEvents("ENCOUNTER_END", function(...) AZP.InstanceLeadership.Events:EncounterEnd(...) end)
+    AZP.Core:RegisterEvents("CHAT_MSG_ADDON", function(...) AZP.InstanceLeadership.Events:ChatMsgAddonVersionRequest(...) end)
 
     AZP.InstanceLeadership:OnLoadBoth(AZP.Core.AddOns.IL.MainFrame)
     AZP.OptionsPanels:RemovePanel("Instance Leadership")
@@ -384,14 +385,14 @@ function AZP.InstanceLeadership:SaveMainFrameLocation()
     AZPILLocation = temp
 end
 
-function AZP.InstanceLeadership:eventChatMsgWhisper(...)
+function AZP.InstanceLeadership.Events:ChatMsgWhisper(...)
     local msgText, msgSender = ...
     if #AutoInviteCommand > 0 and string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
         C_PartyInfo.InviteUnit(msgSender)
     end
 end
 
-function AZP.InstanceLeadership:eventChatMsgBnWhisper(...)
+function AZP.InstanceLeadership.Events:ChatMsgBnWhisper(...)
     local msgText, _, _, _, _, _, _, _, _, _, _, _, friendIndex = ...
     if #AutoInviteCommand > 0 and string.match(string.lower(msgText), string.lower(AutoInviteCommand)) then
         local accountInfo = C_BattleNet.GetAccountInfoByID(friendIndex)
@@ -403,7 +404,7 @@ function AZP.InstanceLeadership:eventChatMsgBnWhisper(...)
     end
 end
 
-function AZP.InstanceLeadership:eventGroupRosterUpdate(...)
+function AZP.InstanceLeadership.Events:GroupRosterUpdate(...)
     if UnitIsGroupLeader("player") and IsInRaid() then
         local text = AutoAssistCommand
         local names = AZP.InstanceLeadership:splitCharacterNames(text)
@@ -416,7 +417,7 @@ function AZP.InstanceLeadership:eventGroupRosterUpdate(...)
     end
 end
 
-function AZP.InstanceLeadership:eventEncounterStart(...)
+function AZP.InstanceLeadership.Events:EncounterStart(...)
     local encounterID, encounterName, difficultyID, groupSize = ...
     for i, encounter in ipairs(AZP.InstanceLeadership.Encounters) do
         if encounterID == encounter.id then
@@ -425,7 +426,7 @@ function AZP.InstanceLeadership:eventEncounterStart(...)
     end
 end
 
-function AZP.InstanceLeadership:eventEncounterEnd(...)
+function AZP.InstanceLeadership.Events:EncounterEnd(...)
     local encounterID, encounterName, difficultyID, groupSize, success = ...
     for i, encounter in ipairs(AZP.InstanceLeadership.Encounters) do
         if encounterID == encounter.id then
@@ -434,7 +435,7 @@ function AZP.InstanceLeadership:eventEncounterEnd(...)
     end
 end
 
-function AZP.InstanceLeadership:eventChatMsgAddonVersionRequest(...)
+function AZP.InstanceLeadership.Events:ChatMsgAddonVersionRequest(...)
     local prefix, payload, _, sender = ...
     if prefix == "AZPRESPONSE" then
         local text = AZPIUVersionRequestEditBox:GetText()
@@ -455,7 +456,7 @@ function AZP.InstanceLeadership:eventChatMsgAddonVersionRequest(...)
     end
 end
 
-function AZP.InstanceLeadership:eventChatMsgAddonVersionControl(...)
+function AZP.InstanceLeadership.Events:ChatMsgAddonVersionControl(...)
     local prefix, payload, _, sender = ...
     if prefix == "AZPVERSIONS" then
         local version = AZP.InstanceLeadership:GetSpecificAddonVersion(payload, "IL")
@@ -465,7 +466,7 @@ function AZP.InstanceLeadership:eventChatMsgAddonVersionControl(...)
     end
 end
 
-function AZP.InstanceLeadership:eventVariablesLoaded(...)
+function AZP.InstanceLeadership.Events:VariablesLoaded(...)
     if AZPILShown == false then
         InstanceLeadershipSelfFrame:Hide()
     end
@@ -478,21 +479,21 @@ end
 
 function AZP.InstanceLeadership:OnEvent(self, event, ...)
     if event == "CHAT_MSG_WHISPER" then
-        AZP.InstanceLeadership:eventChatMsgWhisper(...)
+        AZP.InstanceLeadership.Events:ChatMsgWhisper(...)
     elseif event == "CHAT_MSG_BN_WHISPER" then
-        AZP.InstanceLeadership:eventChatMsgBnWhisper(...)
+        AZP.InstanceLeadership.Events:ChatMsgBnWhisper(...)
     elseif event == "GROUP_ROSTER_UPDATE" then
-        AZP.InstanceLeadership:eventGroupRosterUpdate(...)
+        AZP.InstanceLeadership.Events:GroupRosterUpdate(...)
         AZP.InstanceLeadership:ShareVersion()
     elseif event == "ENCOUNTER_START" then
-        AZP.InstanceLeadership:eventEncounterStart(...)
+        AZP.InstanceLeadership.Events:EncounterStart(...)
     elseif event == "ENCOUNTER_END" then
-        AZP.InstanceLeadership:eventEncounterEnd(...)
+        AZP.InstanceLeadership.Events:EncounterEnd(...)
     elseif event == "CHAT_MSG_ADDON" then
-        AZP.InstanceLeadership:eventChatMsgAddonVersionRequest(...)
-        AZP.InstanceLeadership:eventChatMsgAddonVersionControl(...)
+        AZP.InstanceLeadership.Events:ChatMsgAddonVersionRequest(...)
+        AZP.InstanceLeadership.Events:ChatMsgAddonVersionControl(...)
     elseif event == "ADDON_LOADED" then
-        AZP.InstanceLeadership:eventVariablesLoaded(...)
+        AZP.InstanceLeadership.Events:VariablesLoaded(...)
     end
 end
 
