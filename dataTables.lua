@@ -27,6 +27,7 @@ AZP.InstanceLeadership.VersionRequest =
 
 AZP.InstanceLeadership.Encounters =
 {
+    -- Castle Nathria
     {
         ["raid"] = "Castle Nathria",
         ["name"] = "Shriekwing",
@@ -76,5 +77,56 @@ AZP.InstanceLeadership.Encounters =
         ["raid"] = "Castle Nathria",
         ["name"] = "Sun King's Salvation",
         ["id"] = 2402
+    },
+    -- Sanctum of Domination
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "The Tarragrue",
+        ["id"] = 2435
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "The Nine",
+        ["id"] = 2439
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "Kel'Thuzad",
+        ["id"] = 2440
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "Sylvanas Windrunner",
+        ["id"] = 2441
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "The Eye of the Jailer",
+        ["id"] = 2442
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "Painsmith Raznal",
+        ["id"] = 2443
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "Remnant of Ner'zhul",
+        ["id"] = 2444
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "Soulrender Dormazain",
+        ["id"] = 2445
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "Guardian of the First Ones",
+        ["id"] = 2446
+    },
+    {
+        ["raid"] = "Sanctum of Domination",
+        ["name"] = "Fatescribe Roh-Kalo",
+        ["id"] = 2447
     }
 }
