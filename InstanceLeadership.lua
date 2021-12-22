@@ -54,7 +54,7 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     CancelPullButton:SetScript("OnClick", 
         function()
             C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(0,-1), "RAID")
-            SendChatMessage("PULL CANCELLED, HAKUNA YOUR TATA'S!" ,"RAID_WARNING")
+            SendChatMessage("PULL CANCELLED, HAKUNA YOUR TATA'S!", "RAID_WARNING")
         end )
 
     local ShortBreakButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
@@ -73,7 +73,7 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
             else
                 print("Make sure to install and enable DBM!")
             end
-            SendChatMessage("5 MINUTE BREAK HAS STARTED!" ,"RAID_WARNING")
+            SendChatMessage("5 MINUTE BREAK HAS STARTED!", "RAID_WARNING")
         end )
 
     local CombatLoggingButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
