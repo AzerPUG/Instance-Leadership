@@ -1,7 +1,7 @@
 if AZP == nil then AZP = {} end
 if AZP.VersionControl == nil then AZP.VersionControl = {} end
 
-AZP.VersionControl["Instance Leadership"] = 25
+AZP.VersionControl["Instance Leadership"] = 26
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
 if AZP.InstanceLeadership.Events == nil then AZP.InstanceLeadership.Events = {} end
 
@@ -51,10 +51,10 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     CancelPullButton.contentText:SetHeight("15")
     CancelPullButton:SetPoint("TOPLEFT", 5, -55)
     CancelPullButton.contentText:SetPoint("CENTER", 0, -1)
-    CancelPullButton:SetScript("OnClick", 
+    CancelPullButton:SetScript("OnClick",
         function()
             C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(0,-1), "RAID")
-            SendChatMessage("PULL CANCELLED, HAKUNA YOUR TATA'S!", "RAID_WARNING")
+            SendChatMessage(AZPILUserPullCancel, "RAID_WARNING")
         end )
 
     local ShortBreakButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
@@ -236,6 +236,7 @@ function AZP.InstanceLeadership:OnLoadCore()
     AZP.Core:RegisterEvents("ENCOUNTER_START", function(...) AZP.InstanceLeadership.Events:EncounterStart(...) end)
     AZP.Core:RegisterEvents("ENCOUNTER_END", function(...) AZP.InstanceLeadership.Events:EncounterEnd(...) end)
     AZP.Core:RegisterEvents("CHAT_MSG_ADDON", function(...) AZP.InstanceLeadership.Events:ChatMsgAddonVersionRequest(...) end)
+    AZP.Core:RegisterEvents("VARIABLES_LOADED", function(...) AZP.InstanceLeadership.Events:VariablesLoaded(...) end)
 
     AZP.InstanceLeadership:OnLoadBoth(AZP.Core.AddOns.IL.MainFrame)
     AZP.OptionsPanels:RemovePanel("Instance Leadership")
@@ -253,6 +254,7 @@ function AZP.InstanceLeadership:OnLoadSelf()
     EventFrame:RegisterEvent("ENCOUNTER_END")
     EventFrame:RegisterEvent("CHAT_MSG_ADDON")
     EventFrame:RegisterEvent("ADDON_LOADED")
+    EventFrame:RegisterEvent("VARIABLES_LOADED")
     EventFrame:SetScript("OnEvent", function(...) AZP.InstanceLeadership:OnEvent(...) end)
 
     UpdateFrame = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
@@ -372,9 +374,28 @@ function AZP.InstanceLeadership:FillOptionsPanel(frameToFill)
     AZPAutoAssistEditBox:SetMaxLetters(100)
     AZPAutoAssistEditBox:SetFontObject("ChatFontNormal")
 
+    local AZPCancelPullLabel = CreateFrame("Frame", "AZPCancelPullLabel", frameToFill)
+    AZPCancelPullLabel:SetSize(500, 15)
+    AZPCancelPullLabel:SetPoint("TOPLEFT", 25, -250)
+    AZPCancelPullLabel.contentText = AZPCancelPullLabel:CreateFontString("AZPCancelPullLabel", "ARTWORK", "GameFontNormalLarge")
+    AZPCancelPullLabel.contentText:SetPoint("TOPLEFT")
+    AZPCancelPullLabel.contentText:SetJustifyH("LEFT")
+    AZPCancelPullLabel.contentText:SetText("Cancel Pull raid warning text:")
+
+    local AZPCancelPullEditBox = CreateFrame("EditBox", "AZPCancelPullEditBox", frameToFill, "InputBoxTemplate")
+    AZPCancelPullEditBox:SetSize(150, 35)
+    AZPCancelPullEditBox:SetWidth(250)
+    AZPCancelPullEditBox:SetPoint("TOPLEFT", 25, -275)
+    AZPCancelPullEditBox:SetAutoFocus(false)
+    AZPCancelPullEditBox:SetScript("OnEditFocusLost", function() AZPILUserPullCancel = AZPCancelPullEditBox:GetText() end)
+    AZPCancelPullEditBox:SetFrameStrata("DIALOG")
+    AZPCancelPullEditBox:SetMaxLetters(100)
+    AZPCancelPullEditBox:SetFontObject("ChatFontNormal")
+
     frameToFill:SetScript("OnShow", function()
         AZPAutoInviteEditBox:SetText(AutoInviteCommand)
         AZPAutoAssistEditBox:SetText(AutoAssistCommand)
+        AZPCancelPullEditBox:SetText(AZPILUserPullCancel)
     end)
     frameToFill:Hide()
 end
@@ -466,7 +487,7 @@ function AZP.InstanceLeadership.Events:ChatMsgAddonVersionControl(...)
     end
 end
 
-function AZP.InstanceLeadership.Events:VariablesLoaded(...)
+function AZP.InstanceLeadership.Events:AddOnLoaded(...)
     if AZPILShown == false then
         InstanceLeadershipSelfFrame:Hide()
     end
@@ -475,6 +496,10 @@ function AZP.InstanceLeadership.Events:VariablesLoaded(...)
         AZPILLocation = {"CENTER", nil, nil, 200, 0}
     end
     InstanceLeadershipSelfFrame:SetPoint(AZPILLocation[1], AZPILLocation[4], AZPILLocation[5])
+end
+
+function AZP.InstanceLeadership.Events:VariablesLoaded()
+    if AZPILUserPullCancel == nil then AZPILUserPullCancel = "PULL CANCELLED! HAKUNA YOUR TATA'S!" end
 end
 
 function AZP.InstanceLeadership:OnEvent(self, event, ...)
@@ -493,7 +518,9 @@ function AZP.InstanceLeadership:OnEvent(self, event, ...)
         AZP.InstanceLeadership.Events:ChatMsgAddonVersionRequest(...)
         AZP.InstanceLeadership.Events:ChatMsgAddonVersionControl(...)
     elseif event == "ADDON_LOADED" then
-        AZP.InstanceLeadership.Events:VariablesLoaded(...)
+        AZP.InstanceLeadership.Events:AddOnLoaded(...)
+    elseif event == "VARIABLES_LOADED" then
+        AZP.InstanceLeadership.Events:VariablesLoaded()
     end
 end
 

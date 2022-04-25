@@ -3,8 +3,8 @@
 ## Author: Tex & AzerPUG Gaming Community (www.azerpug.com/discord)
 ## OptionalDeps: AzerPUGsCore
 ## Notes: Utility for Instances (Raids and Dungeons)!
-## Version: SL 9.1 (For actual addon version, check InstanceLeadership.lua)
-## SavedVariables: AutoInviteCommand, AutoAssistCommand, AZPILSavedRaidPresence, AZPILLocation, AZPILShown
+## Version: SL 9.2 (For actual addon version, check InstanceLeadership.lua)
+## SavedVariables: AutoInviteCommand, AutoAssistCommand, AZPILSavedRaidPresence, AZPILLocation, AZPILShown, AZPILUserPullCancel
 
 dataTables.lua
 SlashCommands.lua
