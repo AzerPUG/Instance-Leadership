@@ -82,51 +82,106 @@ AZP.InstanceLeadership.Encounters =
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "The Tarragrue",
-        ["id"] = 2435
+        ["id"] = 2423
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "The Nine",
-        ["id"] = 2439
+        ["id"] = 2429
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "Kel'Thuzad",
-        ["id"] = 2440
+        ["id"] = 2422
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "Sylvanas Windrunner",
-        ["id"] = 2441
+        ["id"] = 2435
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "The Eye of the Jailer",
-        ["id"] = 2442
+        ["id"] = 2433
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "Painsmith Raznal",
-        ["id"] = 2443
+        ["id"] = 2430
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "Remnant of Ner'zhul",
-        ["id"] = 2444
+        ["id"] = 2432
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "Soulrender Dormazain",
-        ["id"] = 2445
+        ["id"] = 2434
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "Guardian of the First Ones",
-        ["id"] = 2446
+        ["id"] = 2436
     },
     {
         ["raid"] = "Sanctum of Domination",
         ["name"] = "Fatescribe Roh-Kalo",
-        ["id"] = 2447
-    }
+        ["id"] = 2431
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Vigilant Guardian",
+        ["id"] = 2512,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Halondrus the Reclaimer",
+        ["id"] = 2529,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "The Jailer",
+        ["id"] = 2537,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Lihuvim, Principal Architect",
+        ["id"] = 2539,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Dausegne, the Fallen Oracle",
+        ["id"] = 2540,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Skolex, the Insatiable Ravener",
+        ["id"] = 2542,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Lords of Dread",
+        ["id"] = 2543,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Prototype Pantheon",
+        ["id"] = 2544,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Anduin Wrynn",
+        ["id"] = 2546,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Rygelon",
+        ["id"] = 2549,
+    },
+    {
+        ["raid"] = "Sepulcher of the First Ones",
+        ["name"] = "Artificer Xy'mox",
+        ["id"] = 2553,
+    },
 }
