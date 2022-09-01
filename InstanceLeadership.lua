@@ -1,7 +1,7 @@
 if AZP == nil then AZP = {} end
 if AZP.VersionControl == nil then AZP.VersionControl = {} end
 
-AZP.VersionControl["Instance Leadership"] = 28
+AZP.VersionControl["Instance Leadership"] = 29
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
 if AZP.InstanceLeadership.Events == nil then AZP.InstanceLeadership.Events = {} end
 
@@ -29,7 +29,26 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     AZPReadyCheckButton.contentText:SetHeight("15")
     AZPReadyCheckButton:SetPoint("TOPLEFT", 5, -5)
     AZPReadyCheckButton.contentText:SetPoint("CENTER", 0, -1)
-    AZPReadyCheckButton:SetScript("OnClick", function() DoReadyCheck() end )
+    AZPReadyCheckButton:SetScript("OnClick", function() DoReadyCheck() end)
+
+    local AZPTactics3Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
+    AZPTactics3Button.contentText = AZPTactics3Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    AZPTactics3Button.contentText:SetText("Tactics 3m!")
+    AZPTactics3Button:SetWidth("100")
+    AZPTactics3Button:SetHeight("25")
+    AZPTactics3Button.contentText:SetWidth("100")
+    AZPTactics3Button.contentText:SetHeight("15")
+    AZPTactics3Button:SetPoint("LEFT", AZPReadyCheckButton, "RIGHT", 10, 0)
+    AZPTactics3Button.contentText:SetPoint("CENTER", 0, -1)
+    AZPTactics3Button:SetScript("OnClick",
+    function()
+        if DBM ~= nil then
+            DBM:CreatePizzaTimer(180, "Tactic Time!", true)
+        else
+            print("Make sure to install and enable DBM!")
+        end
+        SendChatMessage("3m Tactic Timer has started!", "RAID_WARNING")
+    end)
 
     local PullButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
     PullButton.contentText = PullButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -40,7 +59,26 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     PullButton.contentText:SetHeight("15")
     PullButton:SetPoint("TOPLEFT", 5, -30)
     PullButton.contentText:SetPoint("CENTER", 0, -1)
-    PullButton:SetScript("OnClick", function() C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(10,-1), "RAID"); end )
+    PullButton:SetScript("OnClick", function() C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(10,-1), "RAID") end)
+
+    local AZPTactics5Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
+    AZPTactics5Button.contentText = AZPTactics5Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    AZPTactics5Button.contentText:SetText("Tactics 5m!")
+    AZPTactics5Button:SetWidth("100")
+    AZPTactics5Button:SetHeight("25")
+    AZPTactics5Button.contentText:SetWidth("100")
+    AZPTactics5Button.contentText:SetHeight("15")
+    AZPTactics5Button:SetPoint("LEFT", PullButton, "RIGHT", 10, 0)
+    AZPTactics5Button.contentText:SetPoint("CENTER", 0, -1)
+    AZPTactics5Button:SetScript("OnClick",
+    function()
+        if DBM ~= nil then
+            DBM:CreatePizzaTimer(300, "Tactic Time!", true)
+        else
+            print("Make sure to install and enable DBM!")
+        end
+        SendChatMessage("5m Tactic Timer has started!", "RAID_WARNING")
+    end)
 
     local CancelPullButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
     CancelPullButton.contentText = CancelPullButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -56,6 +94,25 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
             C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(0,-1), "RAID")
             SendChatMessage(AZPILUserPullCancel, "RAID_WARNING")
         end )
+
+        local AZPTactics10Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
+        AZPTactics10Button.contentText = AZPTactics10Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+        AZPTactics10Button.contentText:SetText("Tactics 10m!")
+        AZPTactics10Button:SetWidth("100")
+        AZPTactics10Button:SetHeight("25")
+        AZPTactics10Button.contentText:SetWidth("100")
+        AZPTactics10Button.contentText:SetHeight("15")
+        AZPTactics10Button:SetPoint("LEFT", CancelPullButton, "RIGHT", 10, 0)
+        AZPTactics10Button.contentText:SetPoint("CENTER", 0, -1)
+        AZPTactics10Button:SetScript("OnClick",
+        function()
+            if DBM ~= nil then
+                DBM:CreatePizzaTimer(600, "Tactic Time!", true)
+            else
+                print("Make sure to install and enable DBM!")
+            end
+            SendChatMessage("10m Tactic Timer has started!", "RAID_WARNING")
+        end)
 
     local ShortBreakButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
     ShortBreakButton.contentText = ShortBreakButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
