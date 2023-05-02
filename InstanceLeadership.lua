@@ -1,7 +1,7 @@
 if AZP == nil then AZP = {} end
 if AZP.VersionControl == nil then AZP.VersionControl = {} end
 
-AZP.VersionControl["Instance Leadership"] = 31
+AZP.VersionControl["Instance Leadership"] = 32
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
 if AZP.InstanceLeadership.Events == nil then AZP.InstanceLeadership.Events = {} end
 
