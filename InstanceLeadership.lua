@@ -1,7 +1,7 @@
 if AZP == nil then AZP = {} end
 if AZP.VersionControl == nil then AZP.VersionControl = {} end
 
-AZP.VersionControl["Instance Leadership"] = 32
+AZP.VersionControl["Instance Leadership"] = 33
 if AZP.InstanceLeadership == nil then AZP.InstanceLeadership = {} end
 if AZP.InstanceLeadership.Events == nil then AZP.InstanceLeadership.Events = {} end
 
@@ -9,8 +9,10 @@ local EventFrame, UpdateFrame = nil, nil
 local HaveShowedUpdateNotification = false
 local AZPIUPresenceEditBox
 local AZPIUPresenceScrollFrame
-local AZPIUVersionRequestEditBox
+--local AZPIUVersionRequestEditBox
 local AZPIUVersionRequestScrollFrame
+
+AZPILAddOnVersions = {}
 
 local AZPILSelfOptionPanel = nil
 local InstanceLeadershipSelfFrame = nil
@@ -27,28 +29,9 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     AZPReadyCheckButton:SetHeight("25")
     AZPReadyCheckButton.contentText:SetWidth("100")
     AZPReadyCheckButton.contentText:SetHeight("15")
-    AZPReadyCheckButton:SetPoint("TOPLEFT", 5, -5)
+    AZPReadyCheckButton:SetPoint("TOPLEFT", 5, -25)
     AZPReadyCheckButton.contentText:SetPoint("CENTER", 0, -1)
     AZPReadyCheckButton:SetScript("OnClick", function() DoReadyCheck() end)
-
-    local AZPTactics3Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
-    AZPTactics3Button.contentText = AZPTactics3Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    AZPTactics3Button.contentText:SetText("Tactics 3m!")
-    AZPTactics3Button:SetWidth("100")
-    AZPTactics3Button:SetHeight("25")
-    AZPTactics3Button.contentText:SetWidth("100")
-    AZPTactics3Button.contentText:SetHeight("15")
-    AZPTactics3Button:SetPoint("LEFT", AZPReadyCheckButton, "RIGHT", 10, 0)
-    AZPTactics3Button.contentText:SetPoint("CENTER", 0, -1)
-    AZPTactics3Button:SetScript("OnClick",
-    function()
-        if DBM ~= nil then
-            DBM:CreatePizzaTimer(180, "Tactic Time!", true)
-        else
-            print("Make sure to install and enable DBM!")
-        end
-        SendChatMessage("3m Tactic Timer has started!", "RAID_WARNING")
-    end)
 
     local PullButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
     PullButton.contentText = PullButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -57,28 +40,10 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     PullButton:SetHeight("25")
     PullButton.contentText:SetWidth("100")
     PullButton.contentText:SetHeight("15")
-    PullButton:SetPoint("TOPLEFT", 5, -30)
+    PullButton:SetPoint("TOPLEFT", 5, -50)
     PullButton.contentText:SetPoint("CENTER", 0, -1)
-    PullButton:SetScript("OnClick", function() C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(10,-1), "RAID") end)
-
-    local AZPTactics5Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
-    AZPTactics5Button.contentText = AZPTactics5Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    AZPTactics5Button.contentText:SetText("Tactics 5m!")
-    AZPTactics5Button:SetWidth("100")
-    AZPTactics5Button:SetHeight("25")
-    AZPTactics5Button.contentText:SetWidth("100")
-    AZPTactics5Button.contentText:SetHeight("15")
-    AZPTactics5Button:SetPoint("LEFT", PullButton, "RIGHT", 10, 0)
-    AZPTactics5Button.contentText:SetPoint("CENTER", 0, -1)
-    AZPTactics5Button:SetScript("OnClick",
-    function()
-        if DBM ~= nil then
-            DBM:CreatePizzaTimer(300, "Tactic Time!", true)
-        else
-            print("Make sure to install and enable DBM!")
-        end
-        SendChatMessage("5m Tactic Timer has started!", "RAID_WARNING")
-    end)
+    -- PullButton:SetScript("OnClick", function() C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(10,-1), "RAID") end)
+    PullButton:SetScript("OnClick", function() C_PartyInfo.DoCountdown(10) end)
 
     local CancelPullButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
     CancelPullButton.contentText = CancelPullButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -87,32 +52,13 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     CancelPullButton:SetHeight("25")
     CancelPullButton.contentText:SetWidth("100")
     CancelPullButton.contentText:SetHeight("15")
-    CancelPullButton:SetPoint("TOPLEFT", 5, -55)
+    CancelPullButton:SetPoint("TOPLEFT", 5, -75)
     CancelPullButton.contentText:SetPoint("CENTER", 0, -1)
     CancelPullButton:SetScript("OnClick",
         function()
             C_ChatInfo.SendAddonMessage("D4", ("PT\t%d\t%d"):format(0,-1), "RAID")
             SendChatMessage(AZPILUserPullCancel, "RAID_WARNING")
         end )
-
-    local AZPTactics10Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
-    AZPTactics10Button.contentText = AZPTactics10Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    AZPTactics10Button.contentText:SetText("Tactics 10m!")
-    AZPTactics10Button:SetWidth("100")
-    AZPTactics10Button:SetHeight("25")
-    AZPTactics10Button.contentText:SetWidth("100")
-    AZPTactics10Button.contentText:SetHeight("15")
-    AZPTactics10Button:SetPoint("LEFT", CancelPullButton, "RIGHT", 10, 0)
-    AZPTactics10Button.contentText:SetPoint("CENTER", 0, -1)
-    AZPTactics10Button:SetScript("OnClick",
-    function()
-        if DBM ~= nil then
-            DBM:CreatePizzaTimer(600, "Tactic Time!", true)
-        else
-            print("Make sure to install and enable DBM!")
-        end
-        SendChatMessage("10m Tactic Timer has started!", "RAID_WARNING")
-    end)
 
     local ShortBreakButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
     ShortBreakButton.contentText = ShortBreakButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -121,17 +67,9 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     ShortBreakButton:SetHeight("25")
     ShortBreakButton.contentText:SetWidth("100")
     ShortBreakButton.contentText:SetHeight("15")
-    ShortBreakButton:SetPoint("TOPLEFT", 5, -80)
+    ShortBreakButton:SetPoint("TOPLEFT", 5, -100)
     ShortBreakButton.contentText:SetPoint("CENTER", 0, -1)
-    ShortBreakButton:SetScript("OnClick",
-        function()
-            if DBM ~= nil then
-                DBM:CreatePizzaTimer(300, "Break Time!", true)
-            else
-                print("Make sure to install and enable DBM!")
-            end
-            SendChatMessage("5 MINUTE BREAK HAS STARTED!", "RAID_WARNING")
-        end )
+    ShortBreakButton:SetScript("OnClick", function() C_PartyInfo.DoCountdown(300) SendChatMessage("5 MINUTE BREAK HAS STARTED!", "RAID_WARNING") end)
 
     local CombatLoggingButton = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
     CombatLoggingButton.contentText = CombatLoggingButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
@@ -140,7 +78,7 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     CombatLoggingButton:SetHeight("25")
     CombatLoggingButton.contentText:SetWidth("100")
     CombatLoggingButton.contentText:SetHeight("15")
-    CombatLoggingButton:SetPoint("TOPLEFT", 5, -105)
+    CombatLoggingButton:SetPoint("TOPLEFT", 5, -125)
     CombatLoggingButton.contentText:SetPoint("CENTER", 0, -1)
     CombatLoggingButton:SetScript("OnClick", function() AZP.InstanceLeadership:ToggleCombatLog() end )
 
@@ -151,7 +89,7 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     AZPSavePresenceButton:SetHeight("25")
     AZPSavePresenceButton.contentText:SetWidth("100")
     AZPSavePresenceButton.contentText:SetHeight("15")
-    AZPSavePresenceButton:SetPoint("TOPLEFT", 5, -130)
+    AZPSavePresenceButton:SetPoint("TOPLEFT", 5, -150)
     AZPSavePresenceButton.contentText:SetPoint("CENTER", 0, -1)
     AZPSavePresenceButton:SetScript("OnClick", function() AZP.InstanceLeadership:SaveRaidPresence(nil, GetRaidDifficultyID()) end )
 
@@ -162,7 +100,7 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     AZPExportPresenceButton:SetHeight("25")
     AZPExportPresenceButton.contentText:SetWidth("100")
     AZPExportPresenceButton.contentText:SetHeight("15")
-    AZPExportPresenceButton:SetPoint("TOPLEFT", 5, -155)
+    AZPExportPresenceButton:SetPoint("TOPLEFT", 5, -175)
     AZPExportPresenceButton.contentText:SetPoint("CENTER", 0, -1)
     AZPExportPresenceButton:SetScript(
         "OnClick", function()
@@ -181,14 +119,72 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     AZPRequestAddonVersions:SetHeight("25")
     AZPRequestAddonVersions.contentText:SetWidth("100")
     AZPRequestAddonVersions.contentText:SetHeight("15")
-    AZPRequestAddonVersions:SetPoint("TOPLEFT", 5, -180)
+    AZPRequestAddonVersions:SetPoint("TOPLEFT", 5, -200)
     AZPRequestAddonVersions.contentText:SetPoint("CENTER", 0, -1)
     AZPRequestAddonVersions:SetScript(
         "OnClick", function()
             InstanceUtilityVersionRequestFrame:Show()
-            AZPIUVersionRequestEditBox:SetText("CharacterName - Checklist - Readycheck - InstanceLeadership - GreatVault - ManaGement\n")
-            C_ChatInfo.SendAddonMessage("AZPREQUEST", "RequestAddonVersions" ,"RAID", 1)
+            AZP.InstanceLeadership.ShowVersions()
+            -- AZPIUVersionRequestEditBox:SetText("CharacterName - Checklist - Readycheck - InstanceLeadership - GreatVault - ManaGement\n")
+            -- C_ChatInfo.SendAddonMessage("AZPREQUEST", "RequestAddonVersions" ,"RAID", 1)
         end )
+
+        local AZPTactics3Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
+        AZPTactics3Button.contentText = AZPTactics3Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+        AZPTactics3Button.contentText:SetText("Tactics 3m!")
+        AZPTactics3Button:SetWidth("100")
+        AZPTactics3Button:SetHeight("25")
+        AZPTactics3Button.contentText:SetWidth("100")
+        AZPTactics3Button.contentText:SetHeight("15")
+        AZPTactics3Button:SetPoint("TOPLEFT", 5, -225)
+        AZPTactics3Button.contentText:SetPoint("CENTER", 0, -1)
+        AZPTactics3Button:SetScript("OnClick",
+        function()
+            if DBM ~= nil then
+                DBM:CreatePizzaTimer(180, "Tactic Time!", true)
+            else
+                print("Make sure to install and enable DBM!")
+            end
+            SendChatMessage("3m Tactic Timer has started!", "RAID_WARNING")
+        end)
+
+        local AZPTactics5Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
+        AZPTactics5Button.contentText = AZPTactics5Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+        AZPTactics5Button.contentText:SetText("Tactics 5m!")
+        AZPTactics5Button:SetWidth("100")
+        AZPTactics5Button:SetHeight("25")
+        AZPTactics5Button.contentText:SetWidth("100")
+        AZPTactics5Button.contentText:SetHeight("15")
+        AZPTactics5Button:SetPoint("TOPLEFT", 5, -250)
+        AZPTactics5Button.contentText:SetPoint("CENTER", 0, -1)
+        AZPTactics5Button:SetScript("OnClick",
+        function()
+            if DBM ~= nil then
+                DBM:CreatePizzaTimer(300, "Tactic Time!", true)
+            else
+                print("Make sure to install and enable DBM!")
+            end
+            SendChatMessage("5m Tactic Timer has started!", "RAID_WARNING")
+        end)
+
+        local AZPTactics10Button = CreateFrame("Button", nil, inputFrame, "UIPanelButtonTemplate")
+        AZPTactics10Button.contentText = AZPTactics10Button:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+        AZPTactics10Button.contentText:SetText("Tactics 10m!")
+        AZPTactics10Button:SetWidth("100")
+        AZPTactics10Button:SetHeight("25")
+        AZPTactics10Button.contentText:SetWidth("100")
+        AZPTactics10Button.contentText:SetHeight("15")
+        AZPTactics10Button:SetPoint("TOPLEFT", 5, -275)
+        AZPTactics10Button.contentText:SetPoint("CENTER", 0, -1)
+        AZPTactics10Button:SetScript("OnClick",
+        function()
+            if DBM ~= nil then
+                DBM:CreatePizzaTimer(600, "Tactic Time!", true)
+            else
+                print("Make sure to install and enable DBM!")
+            end
+            SendChatMessage("10m Tactic Timer has started!", "RAID_WARNING")
+        end)
 
     local InstanceUtilityPresenceExportFrame = CreateFrame("FRAME", "InstanceUtilityPresenceExportFrame", UIParent, "BackdropTemplate")
     InstanceUtilityPresenceExportFrame:SetPoint("CENTER", 0, 0)
@@ -236,7 +232,6 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     AZPIUPresenceEditBox:SetWidth(300)
     AZPIUPresenceScrollFrame:SetScrollChild(AZPIUPresenceEditBox)
 
-
     local InstanceUtilityVersionRequestFrame = CreateFrame("FRAME", "InstanceUtilityVersionRequestFrame", UIParent, "BackdropTemplate")
     InstanceUtilityVersionRequestFrame:SetPoint("CENTER", 0, 0)
     InstanceUtilityVersionRequestFrame:SetScript("OnEvent", function(...) AZP.InstanceLeadership:OnEvent(...) end)
@@ -249,6 +244,10 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     })
     InstanceUtilityVersionRequestFrame:SetBackdropColor(0.5, 0.5, 0.5, 0.75)
     InstanceUtilityVersionRequestFrame:Hide()
+    InstanceUtilityVersionRequestFrame.Text = InstanceUtilityVersionRequestFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    InstanceUtilityVersionRequestFrame.Text:SetWidth(InstanceUtilityVersionRequestFrame:GetWidth())
+    InstanceUtilityVersionRequestFrame.Text:SetHeight(InstanceUtilityVersionRequestFrame:GetHeight())
+    InstanceUtilityVersionRequestFrame.Text:SetPoint("CENTER", 0, -1)
 
     local CloseButton = CreateFrame("Button", nil, InstanceUtilityVersionRequestFrame, "UIPanelCloseButton")
     CloseButton:SetWidth(InstanceUtilityPresenceTitleFrame:GetHeight() + 3)
@@ -260,11 +259,11 @@ function AZP.InstanceLeadership:OnLoadBoth(inputFrame)
     AZPIUVersionRequestScrollFrame:SetSize(600, 230)
     AZPIUVersionRequestScrollFrame:SetPoint("TOPLEFT", 25, -25)
 
-    AZPIUVersionRequestEditBox = CreateFrame("EditBox", nil, AZPIUPresenceScrollFrame)
-    AZPIUVersionRequestEditBox:SetMultiLine(true)
-    AZPIUVersionRequestEditBox:SetFontObject("ChatFontNormal")
-    AZPIUVersionRequestEditBox:SetWidth(600)
-    AZPIUVersionRequestScrollFrame:SetScrollChild(AZPIUVersionRequestEditBox)
+    -- AZPIUVersionRequestEditBox = CreateFrame("EditBox", nil, AZPIUPresenceScrollFrame)
+    -- AZPIUVersionRequestEditBox:SetMultiLine(true)
+    -- AZPIUVersionRequestEditBox:SetFontObject("ChatFontNormal")
+    -- AZPIUVersionRequestEditBox:SetWidth(600)
+    -- AZPIUVersionRequestScrollFrame:SetScrollChild(AZPIUVersionRequestEditBox)
 
 
     local AZPClearPresenceButton = CreateFrame("Button", nil, InstanceUtilityPresenceExportFrame, "UIPanelButtonTemplate")
@@ -300,7 +299,7 @@ function AZP.InstanceLeadership:OnLoadCore()
     AZP.OptionsPanels:Generic("Instance Leadership", optionHeader, function(frame) AZP.InstanceLeadership:FillOptionsPanel(frame) end)
 end
 
-function AZP.InstanceLeadership:OnLoadSelf()
+function AZP.InstanceLeadership:OnLoad()
     C_ChatInfo.RegisterAddonMessagePrefix("AZPVERSIONS")
 
     EventFrame = CreateFrame("FRAME", nil)
@@ -340,9 +339,8 @@ function AZP.InstanceLeadership:OnLoadSelf()
     UpdateFrameCloseButton:SetPoint("TOPRIGHT", UpdateFrame, "TOPRIGHT", 2, 2)
     UpdateFrameCloseButton:SetScript("OnClick", function() UpdateFrame:Hide() end )
 
-
-    InstanceLeadershipSelfFrame = CreateFrame("Button", nil, UIParent, "BackdropTemplate")
-    InstanceLeadershipSelfFrame:SetSize(110, 220)
+    InstanceLeadershipSelfFrame = CreateFrame("Frame", nil, UIParent, "BasicFrameTemplate")
+    InstanceLeadershipSelfFrame:SetSize(110, 310)
     InstanceLeadershipSelfFrame:SetPoint("CENTER", 0, 0)
     InstanceLeadershipSelfFrame:SetScript("OnDragStart", InstanceLeadershipSelfFrame.StartMoving)
     InstanceLeadershipSelfFrame:SetScript("OnDragStop", function()
@@ -352,18 +350,6 @@ function AZP.InstanceLeadership:OnLoadSelf()
     InstanceLeadershipSelfFrame:RegisterForDrag("LeftButton")
     InstanceLeadershipSelfFrame:EnableMouse(true)
     InstanceLeadershipSelfFrame:SetMovable(true)
-    InstanceLeadershipSelfFrame:SetBackdrop({
-        bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-        edgeSize = 12,
-        insets = { left = 1, right = 1, top = 1, bottom = 1 },
-    })
-    InstanceLeadershipSelfFrame:SetBackdropColor(0.5, 0.5, 0.5, 0.75)
-
-    local IUAddonFrameCloseButton = CreateFrame("Button", nil, InstanceLeadershipSelfFrame, "UIPanelCloseButton")
-    IUAddonFrameCloseButton:SetSize(20, 21)
-    IUAddonFrameCloseButton:SetPoint("TOPRIGHT", InstanceLeadershipSelfFrame, "TOPRIGHT", 2, 2)
-    IUAddonFrameCloseButton:SetScript("OnClick", function() AZP.InstanceLeadership:ShowHideFrame() end )
 
     AZPILSelfOptionPanel = CreateFrame("FRAME", nil)
     AZPILSelfOptionPanel.name = optionHeader
@@ -516,7 +502,7 @@ end
 function AZP.InstanceLeadership.Events:ChatMsgAddonVersionRequest(...)
     local prefix, payload, _, sender = ...
     if prefix == "AZPRESPONSE" then
-        local text = AZPIUVersionRequestEditBox:GetText()
+        --local text = AZPIUVersionRequestEditBox:GetText()
         local pattern = "|([A-Z]+):([0-9]+)|"
         local index = 1
         local versions = {-1, -1, -1, -1, -1}
@@ -529,14 +515,15 @@ function AZP.InstanceLeadership.Events:ChatMsgAddonVersionRequest(...)
                 versions[matchingAddon.Position] = version
             end
         end
-        text = text .. string.format("%s: %s\n", sender, table.concat(versions, " - "))
-        AZPIUVersionRequestEditBox:SetText(text)
+        -- text = text .. string.format("%s: %s\n", sender, table.concat(versions, " - "))
+        -- AZPIUVersionRequestEditBox:SetText(text)
     end
 end
 
 function AZP.InstanceLeadership.Events:ChatMsgAddonVersionControl(...)
     local prefix, payload, _, sender = ...
     if prefix == "AZPVERSIONS" then
+        AZP.InstanceLeadership:VersionsAddOns(sender, payload)
         local version = AZP.InstanceLeadership:GetSpecificAddonVersion(payload, "IL")
         if version ~= nil then
             AZP.InstanceLeadership:ReceiveVersion(version)
@@ -728,6 +715,35 @@ function AZP.InstanceLeadership:ReceiveVersion(version)
     end
 end
 
+function AZP.InstanceLeadership:VersionsAddOns(sender, payload)
+    if AZPILAddOnVersions[sender] == nil then
+        AZPILAddOnVersions[sender] = {}
+    end
+    local pattern = "|([A-Z]+):([0-9]+)|"
+    local index = 1
+    while index < #payload do
+        local _, endPos = string.find(payload, pattern, index)
+        local addon, version = string.match(payload, pattern, index)
+        index = endPos + 1
+        AZPILAddOnVersions[sender][addon] = tonumber(version)
+    end
+end
+
+function AZP.InstanceLeadership.ShowVersions()
+    InstanceUtilityVersionRequestFrame.Text:SetText("")
+    for name, data in pairs(AZPILAddOnVersions) do
+        local versionString = ""
+        for addon, version in pairs(data) do
+            versionString = versionString .. string.format("  %s: %d  ", addon, version)
+        end
+        if InstanceUtilityVersionRequestFrame.Text:GetText() == "" or InstanceUtilityVersionRequestFrame.Text:GetText() == nil then
+            InstanceUtilityVersionRequestFrame.Text:SetText(string.format("%s:%s\n", name, versionString))
+        else
+            InstanceUtilityVersionRequestFrame.Text:SetText(InstanceUtilityVersionRequestFrame.Text:GetText() .. string.format("%s:%s\n", name, versionString))
+        end
+    end
+end
+
 function AZP.InstanceLeadership:GetSpecificAddonVersion(versionString, addonWanted)
     local pattern = "|([A-Z]+):([0-9]+)|"
     local index = 1
@@ -741,9 +757,9 @@ function AZP.InstanceLeadership:GetSpecificAddonVersion(versionString, addonWant
     end
 end
 
-if not IsAddOnLoaded("AzerPUGsCore") then
-    AZP.InstanceLeadership:OnLoadSelf()
-end
+
+AZP.InstanceLeadership:OnLoad()
+
 
 AZP.SlashCommands["IL"] = function()
     if InstanceLeadershipSelfFrame ~= nil then AZP.InstanceLeadership:ShowHideFrame() end
